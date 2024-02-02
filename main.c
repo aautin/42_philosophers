@@ -16,10 +16,27 @@
 
 void	*thread_routine(void *adress)
 {
-	int time_save = (struct timeval *)(adress)->tv_usec;
-	usleep(1000);
-	printf("ld\n", time_save);
+	struct timeval	time_save;
+
+	usleep(200);
+	gettimeofday(&time_save, NULL);
+	printf("thread_routine:\t\t%ld\n", time_save.tv_usec - ((struct timeval *)adress)->tv_usec);
+	pthread_exit("fin du thread");
 }
+
+void	*func1(void *i)
+{
+	*((int *) i) = *((int *) i) + 1;
+	pthread_exit("fin du thread");
+}
+
+void	*func2(void *i)
+{
+	usleep(3000);
+	*((int *) i) = *((int *) i) + 1;
+	pthread_exit("fin du thread");
+}
+
 
 int	main(int argc, char *argv[])
 {
@@ -47,7 +64,6 @@ int	main(int argc, char *argv[])
 	printf("nb\t\t\t%d\n", nb);
 	memset(&nb, 255, 4);
 	printf("nb\t\t\t%d\n", nb);
-	memset(&nb, 255, 5);
 
 
 
@@ -66,9 +82,31 @@ int	main(int argc, char *argv[])
 
 
 
-	// pthread_create
+	// pthread_create && pthread_join && pthread_exit
 	pthread_t	thread;
+	char		*return_val;
 	pthread_create(&thread, NULL, &thread_routine, &time);
+	pthread_join(thread, (void **) &return_val);
+	printf("return_value\t\t%s\n", return_val);
+
+
+
+	// the threads of a single process share the same memory_space
+	pthread_t	thread1;
+	pthread_t	thread2;
+	int i = 0;
+	pthread_create(&thread1, NULL, &func1, &i);
+	pthread_create(&thread2, NULL, &func2, &i);
+
+	pthread_join(thread1, NULL);
+	printf("i after thread1 ended\t%d\n", i);
+	pthread_join(thread2, NULL);
+	printf("i after thread2 ended\t%d\n", i);
+
+
+
+	// the threads trying to access to the same variable at the same time
+	
 	return (0);
 }
  
