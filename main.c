@@ -1,3 +1,6 @@
+#include <stdlib.h>
+// malloc
+
 #include <sys/time.h>
 // gettimeofday
 
@@ -73,6 +76,31 @@ void	*decrementation_mutex(void *i)
 		pthread_mutex_unlock((pthread_mutex_t *) i);
 	}
 	pthread_exit(NULL);
+}
+
+void	*get_ten()
+{
+	int	*ten;
+	ten = (int *)malloc(sizeof(int));
+	// have to malloc because return a local_stack variable would trigger a segfault
+	*ten = 10;
+	printf("(from routine) Value\t%d\nAdress of the value\t%p\n", *ten, ten);
+	return ((void *) ten);
+}
+
+void	*get_ten2(void *ten)
+{
+	*(int *)ten = 10;
+	printf("(from routine) Arg_value\t%d\nAdress of arg_value\t\t%p\n", *(int *) ten, ten);
+	return (NULL);
+}
+
+int		primes[10] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 };
+void	*print_prime(void *a)
+{
+	printf(" %d", primes[*(int *) a]);
+	free(a);
+	return (NULL);
 }
 
 int	main(int argc, char *argv[])
@@ -188,19 +216,63 @@ int	main(int argc, char *argv[])
 	pthread_mutex_t	mutex_3;
 	pthread_mutex_init(&mutex_3, NULL);
 	global_variable = 0;
-	for (index = 0; index < 2; index++)
+	int index2;
+	for (index2 = 0; index2 < 2; index2++)
 	{
-		pthread_create(&th2[index], NULL, &incrementation_mutex, &mutex_3);
-		printf("thread[%d] has been created\n", index);
+		pthread_create(&th2[index2], NULL, &incrementation_mutex, &mutex_3);
+		printf("thread[%d] has been created\n", index2);
 	}
-	for (index = 0; index < 2; index++)
+	for (index2 = 0; index2 < 2; index2++)
 	{
-		pthread_join(th2[index], NULL);
-		printf("finished to wait thread[%d]\n", index);
+		pthread_join(th2[index2], NULL);
+		printf("finished to wait thread[%d]\n", index2);
 	}
 	printf("(right loops) data races's number\t%d\n\n", global_variable - 200000);
 	pthread_mutex_destroy(&mutex_3);
 
+
+
+	// comprendre l'utilite de fournir l'espace memoire de la variable que l'on veut retourner
+	// depuis la fonction creant le thread (en argument de pthread_create)
+	// mauvaise facon de proceder:
+	int	*return_value;
+	pthread_create(&thread, NULL, &get_ten, NULL);
+	pthread_join(thread, (void **) &return_value);
+	printf("(from main) Value\t%d\nAdress of the value\t%p\n\n", *return_value, return_value);
+	free(return_value);
+	// have to free the pointer because it points on a local_stack malloc variable
+	// !!! and it creates a distance between allocate-space and free-space which isn't consistent!!!
+	// bonne facon de proceder:
+	pthread_mutex_t	mutex3;
+	int arg_value;
+	int *returned_value;
+	pthread_create(&thread, NULL, &get_ten2, &arg_value);
+	pthread_join(thread, (void **) &returned_value);
+	printf("(from main) Arg_value\t\t%d\nAdress of arg_value\t\t%p\n\n", arg_value, &arg_value);
+	// we just give the adress of an stack-element of the calling function to the called-function
+	//	-> no distance between malloc-free created	->no malloc needed here
+
+
+
+	// problem: create 10 threads, each printing on STDOUT a unique prime from a global array
+	// solution:
+	pthread_t	th3[10];
+	int a;
+	printf("10 first prime numbers:");
+	for (a = 0; a < 10; a++)
+	{
+		int *b = (int *)malloc(sizeof(int));
+		*b = a;
+		pthread_create(&th3[a], NULL, &print_prime, b);
+	}
+	for (a = 0; a < 10; a++)
+		pthread_join(th3[a], NULL);
+	printf("\n");
+
+
+
+	// problem: summing an variable-sized array of int while using 10 threads to do it
+	// solution:
+	// To be continued...
 	return (0);
 }
- 
