@@ -288,5 +288,10 @@ int main(int argc, char *argv[])
 		pthread_join(th3[i], NULL);
 	pthread_mutex_destroy(&mutex_4);
 	printf("%d\n", sum);
+
+
+
+	// discover and practice the conditionnal_variables and the signal sendings
+	// to be continued...
 	return (0);
 }
