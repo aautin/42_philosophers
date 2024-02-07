@@ -117,8 +117,71 @@ void *sum_array(void *a)
 	return (NULL);
 }
 
+// tab[0] = &battery;
+// tab[1] = &battery_mutex;
+// tab[2] = &battery_cond;
+// tab[3] = &time_struct;
+// tab[4] = &time_charge;
+// tab[5] = &time_use;
+void *to_charge(void *a)
+{
+	void **tab;
+	int current_time;
+
+	tab = (void **)a;
+	current_time = ((struct timeval *) tab[4])->tv_sec - ((struct timeval *) tab[3])->tv_sec; 
+	gettimeofday((struct timeval *) tab[4], NULL);
+
+	pthread_mutex_lock((pthread_mutex_t *) tab[1]);
+	while (current_time < 10)
+	{
+		printf("Battery: %d || time_spent: %d\n", *(int *) tab[0], current_time);
+		if (*(int *) tab[0] <= 85)
+		{
+			*(int *) tab[0] += 15;
+			printf("Fill battery\n");
+			sleep(1);
+		}
+		pthread_cond_wait((pthread_cond_t *) tab[2], (pthread_mutex_t *) tab[1]);
+		gettimeofday((struct timeval *) tab[4], NULL);
+		current_time = ((struct timeval *) tab[4])->tv_sec - ((struct timeval *) tab[3])->tv_sec;
+	}
+	pthread_mutex_unlock((pthread_mutex_t *) tab[1]);
+	printf("battery: %d || time_spent: %d\n", *(int *) tab[0], current_time);
+	pthread_exit(NULL);
+}
+
+void *to_use(void *a)
+{
+	void **tab;
+	int current_time;
+	tab = (void **)a;
+	current_time = ((struct timeval *) tab[5])->tv_sec - ((struct timeval *) tab[3])->tv_sec; 
+	gettimeofday((struct timeval *) tab[5], NULL);
+
+	while (current_time < 10)
+	{
+		pthread_mutex_lock((pthread_mutex_t *) tab[1]);
+		printf("Battery: %d || time_spent: %d\n", *(int *) tab[0], current_time);
+		if (*(int *) tab[0] > 50)
+		{
+			*(int *) tab[0] -= 30;
+			printf("Go\n");
+			sleep(2);
+		}
+		pthread_mutex_unlock((pthread_mutex_t *) tab[1]);
+		printf("Unlock and signal\n");
+		pthread_cond_signal((pthread_cond_t *) tab[2]);
+		sleep(1);
+		gettimeofday((struct timeval *) tab[5], NULL);
+		current_time = ((struct timeval *) tab[5])->tv_sec - ((struct timeval *) tab[3])->tv_sec;
+	}
+	pthread_exit(NULL);
+}
+
 int main(int argc, char *argv[])
 {
+	// valgrind --tool=helgrind (--tool=drd ou -fsanitize=thread)
 	// struct timeval	time;
 
 	// // gettimeofday
@@ -252,46 +315,86 @@ int main(int argc, char *argv[])
 	// // we just give the adress of an stack-element of the calling function to the called-function
 	// //	-> no distance between malloc-free created	->no malloc needed here
 
-	// problem: create 10 threads, each printing on STDOUT a unique prime from a global array
-	// solution:
-	pthread_t th3[10];
-	int a;
-	printf("10 first prime numbers:");
-	for (a = 0; a < 10; a++)
-	{
-		int *b = (int *)malloc(sizeof(int));
-		*b = a;
-		pthread_create(&th3[a], NULL, &print_prime, b);
-	}
-	for (a = 0; a < 10; a++)
-		pthread_join(th3[a], NULL);
-	printf("\n");
+	// // problem: create 10 threads, each printing on STDOUT a unique prime from a global array
+	// // solution:
+	// pthread_t th3[10];
+	// int a;
+	// printf("10 first prime numbers:");
+	// for (a = 0; a < 10; a++)
+	// {
+	// 	int *b = (int *)malloc(sizeof(int));
+	// 	*b = a;
+	// 	pthread_create(&th3[a], NULL, &print_prime, b);
+	// }
+	// for (a = 0; a < 10; a++)
+	// 	pthread_join(th3[a], NULL);
+	// printf("\n");
 
-	// problem: summing an variable-sized array of int while using 10 threads to do it
-	// solution:
-	int array_len;
-	for (array_len = 0; primes[array_len] != 0; array_len++);
-	pthread_mutex_t mutex_4;
-	pthread_mutex_init(&mutex_4, NULL);
-	int sum = 0;
-	for (int i = 0; i < array_len; i++)
-	{
-		int *i_copy = (int *)malloc(sizeof(int));
-		*i_copy = i;
-		void **hey = (void **)malloc(3 * sizeof(void *));
-		hey[0] = (void *)i_copy;
-		hey[1] = (void *)(&sum);
-		hey[2] = &mutex_4;
-		pthread_create(&th3[i], NULL, &sum_array, hey);
-	}
-	for (int i = 0; i < array_len; i++)
-		pthread_join(th3[i], NULL);
-	pthread_mutex_destroy(&mutex_4);
-	printf("%d\n", sum);
+	// // problem: summing an variable-sized array of int while using 10 threads to do it
+	// // solution:
+	// int array_len;
+	// for (array_len = 0; primes[array_len] != 0; array_len++);
+	// pthread_mutex_t mutex_4;
+	// pthread_mutex_init(&mutex_4, NULL);
+	// int sum = 0;
+	// for (int i = 0; i < array_len; i++)
+	// {
+	// 	int *i_copy = (int *)malloc(sizeof(int));
+	// 	*i_copy = i;
+	// 	void **hey = (void **)malloc(3 * sizeof(void *));
+	// 	hey[0] = (void *)i_copy;
+	// 	hey[1] = (void *)(&sum);
+	// 	hey[2] = &mutex_4;
+	// 	pthread_create(&th3[i], NULL, &sum_array, hey);
+	// }
+	// for (int i = 0; i < array_len; i++)
+	// 	pthread_join(th3[i], NULL);
+	// pthread_mutex_destroy(&mutex_4);
+	// printf("%d\n", sum);
 
 
 
 	// discover and practice the conditionnal_variables and the signal sendings
-	// to be continued...
+	// problem : fill a mobile battery, go outside during two secondes when it's up to 50
+	// and it's coming back with 30 percents less. Do this simulation on 30 secondes.
+	pthread_t		charge;
+	pthread_t		use;
+	int				battery;
+	struct timeval	time_struct;
+	struct timeval	time_charge;
+	struct timeval	time_use;
+	pthread_mutex_t	battery_mutex;
+	pthread_cond_t	battery_cond;
+	void			**tab;
+
+	pthread_mutex_init(&battery_mutex, NULL);
+	pthread_cond_init(&battery_cond, NULL);
+	gettimeofday(&time_struct, NULL);
+	battery = 0;
+	tab = (void **)malloc(6 * sizeof(void *));
+	tab[0] = &battery;
+	tab[1] = &battery_mutex;
+	tab[2] = &battery_cond;
+	tab[3] = &time_struct;
+	tab[4] = &time_charge;
+	tab[5] = &time_use;
+	
+	// create both threads
+	if (pthread_create(&charge, NULL, &to_charge, (void *) tab) != 0)
+		perror("Error during thread creation");
+	if (pthread_create(&use, NULL, &to_use, (void *) tab) != 0)
+		perror("Error during thread creation");
+	// join both threads
+	if (pthread_join(charge, NULL) != 0)
+		perror("Error during thread join");
+	if (pthread_join(use, NULL) != 0)
+		perror("Error during thread join");
+
+	pthread_mutex_destroy(&battery_mutex);
+	pthread_cond_destroy(&battery_cond);
+	free(tab);
+
+
+
 	return (0);
 }
