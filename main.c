@@ -127,29 +127,27 @@ void *to_charge(void *a)
 	void **tab = (void **)a;
 	int current_time;
 
-	sleep(1);
 	pthread_mutex_lock((pthread_mutex_t *) tab[1]);
-	pthread_cond_signal((pthread_cond_t *) tab[2]);
 
 	gettimeofday((struct timeval *) tab[4], NULL);
 	current_time = ((struct timeval *) tab[4])->tv_sec - ((struct timeval *) tab[3])->tv_sec; 
-	while (current_time < 10)
+	printf("Battery: %d || time_spent: %d\n", *(int *) tab[0], current_time);
+	while (current_time < 20)
 	{
-		printf("Battery: %d || time_spent: %d\n", *(int *) tab[0], current_time);
 		if (*(int *) tab[0] <= 85)
 		{
-			*(int *) tab[0] += 15;
-			printf("Fill battery\n");
+			printf("charge\n");
+			sleep(1);
+			*(int *) tab[0] += 25;
 		}
 		else
-			printf("No fill battery\n");
+			printf("no charge\n");
 		gettimeofday((struct timeval *) tab[4], NULL);
 		current_time = ((struct timeval *) tab[4])->tv_sec - ((struct timeval *) tab[3])->tv_sec;
 		pthread_cond_signal((pthread_cond_t *) tab[2]);
 		pthread_cond_wait((pthread_cond_t *) tab[2], (pthread_mutex_t *) tab[1]);
 	}
 	pthread_mutex_unlock((pthread_mutex_t *) tab[1]);
-	printf("battery: %d || time_spent: %d\n", *(int *) tab[0], current_time);
 	pthread_exit(NULL);
 }
 
@@ -158,21 +156,20 @@ void *to_use(void *a)
 {
 	void **tab = (void **)a;
 
-	pthread_cond_wait((pthread_cond_t *) tab[2], (pthread_mutex_t *) tab[1]);
-	while (((struct timeval *) tab[4])->tv_sec - ((struct timeval *) tab[3])->tv_sec < 10)
+	while (((struct timeval *) tab[4])->tv_sec - ((struct timeval *) tab[3])->tv_sec < 20)
 	{
-		printf("Wait\n");
 		pthread_cond_wait((pthread_cond_t *) tab[2], (pthread_mutex_t *) tab[1]);
-		printf("No wait anymore\n");
+		printf("Battery: %d || time_spent: %ld\n", *(int *) tab[0],
+				((struct timeval *) tab[4])->tv_sec - ((struct timeval *) tab[3])->tv_sec);
 		if (*(int *) tab[0] > 50)
 		{
+			printf("use\n");
+			sleep(3);
 			*(int *) tab[0] -= 30;
-			printf("Go\n");
 		}
 		else
-			printf("No go\n");
+			printf("no use\n");
 		pthread_mutex_unlock((pthread_mutex_t *) tab[1]);
-		printf("Unlock and signal\n");
 		pthread_cond_signal((pthread_cond_t *) tab[2]);
 	}
 	pthread_exit(NULL);
