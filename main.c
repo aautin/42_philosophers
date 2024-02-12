@@ -19,7 +19,7 @@
 
 int global_variable;
 
-void *thread_routine(void *adress)
+void	*thread_routine(void *adress)
 {
 	struct timeval time_save;
 
@@ -29,34 +29,34 @@ void *thread_routine(void *adress)
 	pthread_exit("fin du thread");
 }
 
-void *func1(void *i)
+void	*func1(void *i)
 {
 	*((int *)i) = *((int *)i) + 1;
 	pthread_exit("fin du thread");
 }
 
-void *func2(void *i)
+void	*func2(void *i)
 {
 	usleep(3000);
 	*((int *)i) = *((int *)i) + 1;
 	pthread_exit("fin du thread");
 }
 
-void *incrementation(void *i)
+void	*incrementation(void *i)
 {
 	for (int j = 0; j < 100000; j++)
 		*((int *)i) = *((int *)i) + 1;
 	pthread_exit(NULL);
 }
 
-void *decrementation(void *i)
+void	*decrementation(void *i)
 {
 	for (int j = 0; j < 100000; j++)
 		*((int *)i) = *((int *)i) - 1;
 	pthread_exit(NULL);
 }
 
-void *incrementation_mutex(void *i)
+void	*incrementation_mutex(void *i)
 {
 	for (int j = 0; j < 100000; j++)
 	{
@@ -67,7 +67,7 @@ void *incrementation_mutex(void *i)
 	pthread_exit(NULL);
 }
 
-void *decrementation_mutex(void *i)
+void	*decrementation_mutex(void *i)
 {
 	for (int j = 0; j < 100000; j++)
 	{
@@ -78,7 +78,7 @@ void *decrementation_mutex(void *i)
 	pthread_exit(NULL);
 }
 
-void *get_ten()
+void	*get_ten()
 {
 	int *ten;
 	ten = (int *)malloc(sizeof(int));
@@ -88,7 +88,7 @@ void *get_ten()
 	return ((void *)ten);
 }
 
-void *get_ten2(void *ten)
+void	*get_ten2(void *ten)
 {
 	*(int *)ten = 10;
 	printf("(from routine) Arg_value\t%d\nAdress of arg_value\t\t%p\n", *(int *)ten, ten);
@@ -96,7 +96,7 @@ void *get_ten2(void *ten)
 }
 
 int primes[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 0};
-void *print_prime(void *a)
+void	*print_prime(void *a)
 {
 	printf(" %d", primes[*(int *)a]);
 	free(a);
@@ -105,7 +105,7 @@ void *print_prime(void *a)
 
 // int *i_copy ; int sum; pthread_mutex_t mutex_4;
 // note: void *a = { i_copy, &sum, &mutex_4};
-void *sum_array(void *a)
+void	*sum_array(void *a)
 {
 	void **a_ptr = (void **)a;
 
@@ -122,7 +122,7 @@ void *sum_array(void *a)
 // tab[2] = &battery_cond;
 // tab[3] = &time;
 // tab[4] = &time_current;
-void *to_charge(void *a)
+void	*to_charge(void *a)
 {
 	void **tab = (void **)a;
 	int current_time;
@@ -152,7 +152,7 @@ void *to_charge(void *a)
 }
 
 
-void *to_use(void *a)
+void	*to_use(void *a)
 {
 	void **tab = (void **)a;
 
@@ -174,6 +174,34 @@ void *to_use(void *a)
 	}
 	pthread_exit(NULL);
 }
+
+// adress_tab[0] = &phone;
+// adress_tab[1] = &phone_mutex;
+// adress_tab[2] = &phone_cond;
+// adress_tab[3] = &a;
+void	*call(void *adress_tab)
+{
+	void	**tab = (void **) adress_tab;
+
+	struct timeval time;
+	int time_start;
+
+	gettimeofday(&time, NULL);
+	time_start = time.tv_sec;
+	while (time.tv_sec - time_start < 10)
+	{
+		while (pthread_mutex_trylock((pthread_mutex_t *) tab[1]) != 0 && time.tv_sec - time_start < 10)
+			gettimeofday(&time, NULL);
+		if (time.tv_sec - time_start >= 10)
+			pthread_exit(tab);
+		printf("user[%d] is having a call\n", *(int *) tab[3]);
+		sleep(*(int *) tab[3] / 2);
+		pthread_mutex_unlock((pthread_mutex_t *) tab[1]);
+		gettimeofday(&time, NULL);
+	}
+	pthread_exit(tab);
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -350,45 +378,78 @@ int main(int argc, char *argv[])
 
 
 
-	// discover and practice the conditionnal_variables and the signal sendings
-	// problem : fill a mobile battery, go outside during two secondes when it's up to 50
-	// and it's coming back with 30 percents less. Do this simulation on 30 secondes.
-	pthread_t		charge;
-	pthread_t		use;
-	int				battery;
-	struct timeval	time;
-	struct timeval	time_current;
-	pthread_mutex_t	battery_mutex;
-	pthread_cond_t	battery_cond;
-	void			**tab;
+	// // discover and practice the conditionnal_variables and the signal and wait functions
+	// // problem : fill a mobile battery, go outside during two secondes when it's up to 50
+	// // and it's coming back with 30 percents less. Do this simulation on 30 secondes.
+	// pthread_t		charge;
+	// pthread_t		use;
+	// int				battery;
+	// struct timeval	time;
+	// struct timeval	time_current;
+	// pthread_mutex_t	battery_mutex;
+	// pthread_cond_t	battery_cond;
+	// void			**tab;
 
-	pthread_mutex_init(&battery_mutex, NULL);
-	pthread_cond_init(&battery_cond, NULL);
-	gettimeofday(&time, NULL);
-	battery = 0;
-	tab = (void **)malloc(5 * sizeof(void *));
-	tab[0] = &battery;
-	tab[1] = &battery_mutex;
-	tab[2] = &battery_cond;
-	tab[3] = &time;
-	tab[4] = &time_current;
+	// pthread_mutex_init(&battery_mutex, NULL);
+	// pthread_cond_init(&battery_cond, NULL);
+	// gettimeofday(&time, NULL);
+	// battery = 0;
+	// tab = (void **)malloc(5 * sizeof(void *));
+	// tab[0] = &battery;
+	// tab[1] = &battery_mutex;
+	// tab[2] = &battery_cond;
+	// tab[3] = &time;
+	// tab[4] = &time_current;
 	
-	// create both threads
-	if (pthread_create(&charge, NULL, &to_charge, (void *) tab) != 0)
-		perror("Error during thread creation");
-	if (pthread_create(&use, NULL, &to_use, (void *) tab) != 0)
-		perror("Error during thread creation");
-	// join both threads
-	if (pthread_join(charge, NULL) != 0)
-		perror("Error during thread join");
-	if (pthread_join(use, NULL) != 0)
-		perror("Error during thread join");
+	// // create both threads
+	// if (pthread_create(&charge, NULL, &to_charge, (void *) tab) != 0)
+	// 	perror("Error during thread creation");
+	// if (pthread_create(&use, NULL, &to_use, (void *) tab) != 0)
+	// 	perror("Error during thread creation");
+	// // join both threads
+	// if (pthread_join(charge, NULL) != 0)
+	// 	perror("Error during thread join");
+	// if (pthread_join(use, NULL) != 0)
+	// 	perror("Error during thread join");
 
-	pthread_mutex_destroy(&battery_mutex);
-	pthread_cond_destroy(&battery_cond);
-	free(tab);
+	// pthread_mutex_destroy(&battery_mutex);
+	// pthread_cond_destroy(&battery_cond);
+	// free(tab);
 
 
 
+	// discover the broadcast functions and practice again the cond variables
+	// 10 threads using, one after the other, a phone. Each thread make a call 
+	// during its index in secondes.
+	pthread_t		users[10];
+	char			phone;
+	pthread_mutex_t	phone_mutex;
+	pthread_cond_t	phone_cond;
+	void			**adress_tab;
+
+	pthread_mutex_init(&phone_mutex, NULL);
+	pthread_cond_init(&phone_cond, NULL);
+	for (int i = 0; i < 10; i++)
+	{
+		int	*a = (int *)malloc(sizeof(int));
+		*a = i;
+		adress_tab = (void **)malloc(4 * sizeof(void *));
+		adress_tab[0] = &phone;
+		adress_tab[1] = &phone_mutex;
+		adress_tab[2] = &phone_cond;
+		adress_tab[3] = a;
+		if (pthread_create(&users[i], NULL, &call, adress_tab) != 0)
+			perror("Error during thread creation");
+	}
+	for (int j = 0; j < 10; j++)
+	{
+		void **tab;
+		if (pthread_join(users[j], (void *) &tab) != 0)
+			perror("Error during thread join");
+		free(tab);
+	}
+
+	pthread_mutex_destroy(&phone_mutex);
+	pthread_cond_destroy(&phone_cond);
 	return (0);
 }
