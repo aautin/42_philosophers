@@ -21,7 +21,7 @@ int	ft_atoi(char *str_number)
 	if (str_number == NULL)
 		return (0);
 	i = 0;
-	while (str_number[i] && 11 <= str_number[i] && str_number[i] <= 15)
+	while ((9 <= str_number[i] && str_number[i] <= 13) || str_number[i] == ' ')
 		i++;
 	sign = 1;
 	if (str_number[i] == '-' || str_number[i] == '+')
@@ -34,9 +34,6 @@ int	ft_atoi(char *str_number)
 		i++;
 	number = 0;
 	while ('0' <= str_number[i] && str_number[i] <= '9')
-	{
-		number = (number * 10) + str_number[i] - '0';
-		i++;
-	}
-	return (number * sign)
+		number = (number * 10) + str_number[i++] - '0';
+	return (number * sign);
 }

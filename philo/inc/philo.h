@@ -13,14 +13,24 @@
 #ifndef PHILO_H
 # define PHILO_H
 
+# include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <sys/time.h>
 
-typedef struct s_times
+typedef struct s_config
 {
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-}	t_times;
+	int				philos_nb;
+	pthread_t		*philos;
+	pthread_mutex_t	*mutexs;
+	char			*forks;
+	int				to_die;
+	int				to_eat;
+	int				to_sleep;
+}	t_config;
+
+typedef struct timeval	t_time;
+
+int	ft_atoi(char *str_number);
 
 #endif
