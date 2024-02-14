@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,9 +12,31 @@
 
 #include "philo.h"
 
-int	main(int argc, char *argv[])
+int	ft_atoi(char *str_number)
 {
-	printf("%d\n", atoi(argv[argc - 1]));
-	printf("%d\n", atoi("\15\14\13\12\11+4"));
-	return (0);
+	int number;
+	int i;
+	int sign;
+
+	if (str_number == NULL)
+		return (0);
+	i = 0;
+	while (str_number[i] && 11 <= str_number[i] && str_number[i] <= 15)
+		i++;
+	sign = 1;
+	if (str_number[i] == '-' || str_number[i] == '+')
+	{
+		if (str_number[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str_number[i] == '0')
+		i++;
+	number = 0;
+	while ('0' <= str_number[i] && str_number[i] <= '9')
+	{
+		number = (number * 10) + str_number[i] - '0';
+		i++;
+	}
+	return (number * sign)
 }

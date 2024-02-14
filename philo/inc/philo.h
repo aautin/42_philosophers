@@ -14,5 +14,13 @@
 # define PHILO_H
 
 # include <stdio.h>
+# include <stdlib.h>
+
+typedef struct s_times
+{
+	int	time_to_die;
+	int	time_to_eat;
+	int	time_to_sleep;
+}	t_times;
 
 #endif
