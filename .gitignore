@@ -3,5 +3,7 @@ a.out
 libft/.git/
 *.o
 *.a
-philo
+philo/philo
+philo_bonus/philo_bonus
 val
+test_debug.c
