@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 16:30:43 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/15 21:59:24 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/15 23:43:27 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	set_table(t_config *config)
 	config->mutexs = (t_mutex *)malloc(config->philos_nb * sizeof(t_mutex));
 	config->philos = (t_thread *)malloc(config->philos_nb * sizeof(t_thread));
 	config->meals = (t_time *)malloc(config->philos_nb * sizeof(t_time));
-	if (!config->forks || !config->mutexs || !config->philos || config->meals)
+	if (!config->forks || !config->mutexs || !config->philos || !config->meals)
 	{
 		if (config->forks)
 			free(config->forks);
@@ -47,7 +47,7 @@ int	set_table(t_config *config)
 	i = 0;
 	while (i < config->philos_nb)
 	{
-		config->forks[i] = 0;
+		config->forks[i] = FREE;
 		pthread_mutex_init(&config->mutexs[i++], NULL);
 	}
 	return (0);
