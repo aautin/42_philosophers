@@ -6,30 +6,45 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/14 03:46:40 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/15 17:09:32 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	set_times(t_config *times, char **argv)
+static void	launch_simulation(t_config *config)
 {
-	times->philos_nb = ft_atoi(argv[1]);
-	times->to_die = ft_atoi(argv[2]);
-	times->to_eat = ft_atoi(argv[3]);
-	times->to_sleep = ft_atoi(argv[4]);
+	int			i;
+	t_baggage	*bag;
+	void		*adress;
+
+	i = 0;
+	while (i < config->philos_nb)
+	{
+		bag = (t_baggage *)malloc(sizeof(t_baggage));
+		bag->config = config;
+		bag->i = i;
+		pthread_create(&config->philos[i++], NULL, &simulation, bag);
+	}
+	i = 0;
+	while (i < config->philos_nb)
+	{
+		pthread_join(config->philos[i++], &adress);
+		free(adress);
+	}
 }
 
 int	main(int argc, char *argv[])
 {
-	t_config	config ;
+	t_config	config;
+
 	if (argc == 5)
 	{
 		set_times(&config, argv);
-		printf("nb_of_philosophers[%d]\n", config.philos_nb);
-		printf("time_to_die[%d]\n", config.to_die);
-		printf("time_to_eat[%d]\n",  config.to_eat);
-		printf("time_to_sleep[%d]\n",  config.to_sleep);
+		if (set_forks(&config) == 1)
+			return (1);
+		launch_simulation(&config);
+		free_config(&config);
 		return (0);
 	}
 	else
