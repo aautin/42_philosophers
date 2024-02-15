@@ -1,28 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   simulation.c                                       :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/15 16:56:13 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/15 20:28:50 by aautin           ###   ########.fr       */
+/*   Created: 2024/02/15 19:12:20 by aautin            #+#    #+#             */
+/*   Updated: 2024/02/15 21:59:24 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*simulation(void *adress)
+int	is_time_to_die(t_baggage *bag)
 {
-	t_baggage	*bag;
+	t_time	current;
+	int		milliseconds;
 
-	bag = (t_baggage *) adress;
-	printf("philos[%d]\n", bag->i);
-	pthread_mutex_lock(&bag->config->mutexs[0]);
-	while (!is_time_to_die(bag))
-	{
-		;
-	}
-	pthread_mutex_unlock(&bag->config->mutexs[0]);
-	pthread_exit(adress);
+	gettimeofday(&current, NULL);
+	milliseconds = 0;
+	milliseconds += (current.tv_sec - bag->config->meals[bag->i].tv_sec)
+		* 1000;
+	milliseconds += (current.tv_usec - bag->config->meals[bag->i].tv_usec)
+		/ 1000;
+	if (milliseconds >= bag->config->to_die)
+		return (1);
+	return (0);
 }

@@ -4,6 +4,7 @@ INCPATH			:=	-I inc
 
 FILES			:=	config.c		\
 					simulation.c	\
+					time.c			\
 					utils.c			\
 					main.c	
 SRCPATH			:=	src

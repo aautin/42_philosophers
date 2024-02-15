@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/15 17:04:33 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/15 21:59:24 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,7 @@ typedef struct s_config
 {
 	t_thread		*philos;
 	t_mutex			*mutexs;
-	t_time			start;
-	t_time			now;
+	t_time			*meals;
 	char			*forks;
 	int				philos_nb;
 	int				to_die;
@@ -46,14 +45,16 @@ typedef struct s_baggage
 
 // utils.c
 int			ft_atoi(char *str_number);
-t_time		get_current_time(t_config *config);
 
 // config.c
 void		set_times(t_config *config, char **argv);
-int			set_forks(t_config *config);
+int			set_table(t_config *config);
 void		free_config(t_config *config);
 
 //simulation.c
 void		*simulation(void *adress);
+
+// time.c
+int			is_time_to_die(t_baggage *bag);
 
 #endif

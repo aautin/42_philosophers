@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/15 16:35:19 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/15 19:12:42 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,4 @@ int	ft_atoi(char *str_number)
 	while ('0' <= str_number[i] && str_number[i] <= '9')
 		number = (number * 10) + str_number[i++] - '0';
 	return (number * sign);
-}
-
-t_time	get_current_time(t_config *config)
-{
-	t_time	current_local;
-	t_time	current_global;
-
-	gettimeofday(&current_global, NULL);
-	current_local.tv_sec = current_global.tv_sec - config->start.tv_sec;
-	current_local.tv_usec = current_global.tv_usec - config->start.tv_usec;
-	return (current_local);
 }
