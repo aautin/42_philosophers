@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 16:30:43 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/15 23:43:27 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/16 15:47:38 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,15 @@ int	set_table(t_config *config)
 		pthread_mutex_init(&config->mutexs[i++], NULL);
 	}
 	return (0);
+}
+
+void	set_indexs(t_baggage *bag, int i)
+{
+	bag->i.i = i;
+	if (bag->config->philos_nb == i + 1)
+		bag->i.right = 0;
+	else
+		bag->i.right = i + 1;
 }
 
 void	free_config(t_config *config)

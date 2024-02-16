@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/15 21:59:24 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/16 16:24:32 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	launch_simulation(t_config *config)
 	{
 		bag = (t_baggage *)malloc(sizeof(t_baggage));
 		bag->config = config;
-		bag->i = i;
+		set_indexs(bag, i);
 		gettimeofday(&config->meals[i], NULL);
 		pthread_create(&config->philos[i++], NULL, &simulation, bag);
 	}
@@ -44,6 +44,7 @@ int	main(int argc, char *argv[])
 		set_times(&config, argv);
 		if (set_table(&config) == 1)
 			return (1);
+		gettimeofday(&config.start, NULL);
 		launch_simulation(&config);
 		free_config(&config);
 		return (0);
