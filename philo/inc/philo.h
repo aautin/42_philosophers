@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/16 16:17:45 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/17 22:34:43 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,45 +32,46 @@ typedef struct timeval	t_time;
 typedef pthread_mutex_t	t_mutex;
 typedef pthread_t		t_thread;
 
-typedef struct s_i
+typedef struct set_timers
 {
-	int			i;
-	int			right;
-}	t_i;
+	unsigned int	to_die;
+	unsigned int	to_eat;
+	unsigned int	to_sleep;
+	t_time			start;
+	t_time			lastmeal;
+}	t_timers;
 
-typedef struct s_config
+typedef struct s_table
 {
 	t_thread		*philos;
 	t_mutex			*mutexs;
-	t_time			*meals;
-	t_time			start;
 	char			*forks;
-	int				philos_nb;
-	int				to_die;
-	int				to_eat;
-	int				to_sleep;
-}	t_config;
+}	t_table;
 
-typedef struct s_baggage
+typedef struct s_bag
 {
-	t_config	*config;
-	t_i			i;
-}	t_baggage;
+	t_table			*table;
+
+	t_timers		*time;
+	unsigned short	*i;
+	unsigned short	*philos_nb;
+}	t_bag;
 
 // utils.c
-int			ft_atoi(char *str_number);
-void		print_log(t_time start, int philo_i, char action);
+int			ft_atou(char *str_number);
+void		print_log(t_mutex *print_mutex, t_time start, unsigned int philo_i, char action);
+// void		kill_philo_during_sleeping(t_bag *bag, int timeleft);
 
 // config.c
-void		set_times(t_config *config, char **argv);
-int			set_table(t_config *config);
-void		set_indexs(t_baggage *bag, int i);
-void		free_config(t_config *config);
+void		set_timers(t_timers *timers, char **argv);
+int			set_table(t_table *table, unsigned short philos_nb);
+void		free_table(t_table *table, unsigned short philos_nb);
+void		free_bag(t_bag *bag);
 
 //simulation.c
 void		*simulation(void *adress);
 
 // time.c
-int			is_time_to_die(t_baggage *bag);
+int			is_time_to_die(t_bag *bag);
 
 #endif

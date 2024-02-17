@@ -6,71 +6,65 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 16:30:43 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/16 15:47:38 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/17 22:25:02 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	set_times(t_config *config, char **argv)
+void	set_timers(t_timers *timers, char **argv)
 {
-	config->philos_nb = ft_atoi(argv[1]);
-	config->to_die = ft_atoi(argv[2]);
-	config->to_eat = ft_atoi(argv[3]);
-	config->to_sleep = ft_atoi(argv[4]);
-	printf("nb_of_philosophers[%d]\n", config->philos_nb);
-	printf("time_to_die[%d]\n", config->to_die);
-	printf("time_to_eat[%d]\n", config->to_eat);
-	printf("time_to_sleep[%d]\n", config->to_sleep);
+	timers->to_die = ft_atou(argv[2]);
+	timers->to_eat = ft_atou(argv[3]);
+	timers->to_sleep = ft_atou(argv[4]);
 }
 
-int	set_table(t_config *config)
+int	set_table(t_table *table, unsigned short philos_nb)
 {
 	int	i;
 
-	config->forks = (char *)malloc(config->philos_nb * sizeof(char));
-	config->mutexs = (t_mutex *)malloc(config->philos_nb * sizeof(t_mutex));
-	config->philos = (t_thread *)malloc(config->philos_nb * sizeof(t_thread));
-	config->meals = (t_time *)malloc(config->philos_nb * sizeof(t_time));
-	if (!config->forks || !config->mutexs || !config->philos || !config->meals)
+	table->forks = (char *)malloc(philos_nb * sizeof(char));
+	table->mutexs = (t_mutex *)malloc((philos_nb + 1) * sizeof(t_mutex));
+	table->philos = (t_thread *)malloc(philos_nb * sizeof(t_thread));
+	if (!table->forks || !table->mutexs || !table->philos)
 	{
-		if (config->forks)
-			free(config->forks);
-		if (config->mutexs)
-			free(config->mutexs);
-		if (config->philos)
-			free(config->philos);
-		if (config->meals)
-			free(config->meals);
-		return (printf("malloc issue\n"), 1);
+		if (table->forks)
+			free(table->forks);
+		if (table->mutexs)
+			free(table->mutexs);
+		if (table->philos)
+			free(table->philos);
+		printf("malloc issue\n");
+		return (1);
 	}
 	i = 0;
-	while (i < config->philos_nb)
+	while (i < philos_nb + 1)
 	{
-		config->forks[i] = FREE;
-		pthread_mutex_init(&config->mutexs[i++], NULL);
+		table->forks[i] = FREE;
+		pthread_mutex_init(&table->mutexs[i++], NULL);
 	}
 	return (0);
 }
 
-void	set_indexs(t_baggage *bag, int i)
-{
-	bag->i.i = i;
-	if (bag->config->philos_nb == i + 1)
-		bag->i.right = 0;
-	else
-		bag->i.right = i + 1;
-}
-
-void	free_config(t_config *config)
+void	free_table(t_table *table, unsigned short philos_nb)
 {
 	int	i;
 
 	i = 0;
-	while (i < config->philos_nb)
-		pthread_mutex_destroy(&config->mutexs[i++]);
-	free(config->philos);
-	free(config->mutexs);
-	free(config->meals);
-	free(config->forks);
+	while (i < philos_nb + 1)
+		pthread_mutex_destroy(&table->mutexs[i++]);
+	free(table->philos);
+	free(table->mutexs);
+	free(table->forks);
+}
+
+void	free_bag(t_bag *bag)
+{
+	if (bag->philos_nb)
+		free(bag->philos_nb);
+	if (bag->i)
+		free(bag->i);
+	if (bag->time)
+		free(bag->time);
+	free(bag);
 }

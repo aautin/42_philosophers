@@ -6,47 +6,51 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/16 16:24:32 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/17 21:28:47 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	launch_simulation(t_config *config)
+static void	launch_simulation(t_table *table, char *argv[], unsigned short nb)
 {
-	int			i;
-	t_baggage	*bag;
-	void		*adress;
+	int				i;
+	t_bag		*bag;
+	t_bag		*adress;
 
 	i = 0;
-	while (i < config->philos_nb)
+	while (i < nb)
 	{
-		bag = (t_baggage *)malloc(sizeof(t_baggage));
-		bag->config = config;
-		set_indexs(bag, i);
-		gettimeofday(&config->meals[i], NULL);
-		pthread_create(&config->philos[i++], NULL, &simulation, bag);
+		bag = (t_bag *)malloc(sizeof(t_bag));
+		bag->time = (t_timers *)malloc(sizeof(t_timers));
+		bag->i = (unsigned short *)malloc(sizeof(unsigned short));
+		bag->philos_nb = (unsigned short *)malloc(sizeof(unsigned short));
+		bag->table = table;
+		*bag->i = i;
+		*bag->philos_nb = nb;
+		set_timers(bag->time, argv);
+		pthread_create(&table->philos[i++], NULL, &simulation, bag);
 	}
 	i = 0;
-	while (i < config->philos_nb)
+	while (i < nb)
 	{
-		pthread_join(config->philos[i++], &adress);
-		free(adress);
+		pthread_join(table->philos[i++], (void **) &adress);
+		free_bag(adress);
 	}
 }
 
 int	main(int argc, char *argv[])
 {
-	t_config	config;
+	t_table			table;
+	unsigned short	philos_nb;
 
 	if (argc == 5)
 	{
-		set_times(&config, argv);
-		if (set_table(&config) == 1)
+		philos_nb = (unsigned short) ft_atou(argv[1]);
+		if (set_table(&table, philos_nb) == 1)
 			return (1);
-		gettimeofday(&config.start, NULL);
-		launch_simulation(&config);
-		free_config(&config);
+		launch_simulation(&table, argv, philos_nb);
+		free_table(&table, philos_nb);
 		return (0);
 	}
 	else
