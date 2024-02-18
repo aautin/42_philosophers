@@ -48,7 +48,10 @@ void	printlog(t_mutex *printmutex, t_time start, unsigned int i, char action)
 	timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 	pthread_mutex_lock(printmutex);
 	if (action == FORK)
+	{
 		printf("%d %d %s", timestamp, i, "has taken a fork\n");
+		printf("%d %d %s", timestamp, i, "has taken a fork\n");
+	}
 	else if (action == EATING)
 		printf("%d %d %s", timestamp, i, "is eating\n");
 	else if (action == SLEEPING)

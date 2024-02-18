@@ -12,6 +12,32 @@
 
 #include "philo.h"
 
+static int	are_forks_free(t_bag *bag)
+{
+	char	status;
+
+	if (*bag->i + 1 != *bag->philos_nb)
+		pthread_mutex_lock(&bag->table->mutexs[(*bag->i)]);
+	pthread_mutex_lock(&bag->table->mutexs[((*bag->i) + 1) % *bag->philos_nb]);
+	if (*bag->i + 1 == *bag->philos_nb)
+		pthread_mutex_lock(&bag->table->mutexs[(*bag->i)]);
+	status = (bag->table->forks[*bag->i] == FREE
+			&& bag->table->forks[((*bag->i) + 1) % *bag->philos_nb] == FREE);
+	if (status == 1)
+	{
+		printlog(&bag->table->mutexs[*bag->philos_nb],
+			bag->time->start, *bag->i, FORK);
+		bag->table->forks[*bag->i] = TAKEN;
+		bag->table->forks[((*bag->i) + 1) % *bag->philos_nb] = TAKEN;
+	}
+	if (*bag->i + 1 != *bag->philos_nb)
+		pthread_mutex_unlock(&bag->table->mutexs[(*bag->i)]);
+	pthread_mutex_unlock(&bag->table->mutexs[(*bag->i + 1) % *bag->philos_nb]);
+	if (*bag->i + 1 == *bag->philos_nb)
+		pthread_mutex_unlock(&bag->table->mutexs[(*bag->i)]);
+	return (status);
+}
+
 static void	free_forks(t_bag *bag)
 {
 	pthread_mutex_lock(&bag->table->mutexs[(*bag->i)]);
@@ -26,60 +52,33 @@ static void	eat(t_bag *bag)
 {
 	printlog(&bag->table->mutexs[*bag->philos_nb],
 		bag->time->start, *bag->i, EATING);
-	if (bag->time->to_eat >= bag->time->to_die)
+	usleep(bag->time->to_eat * 1000);
+	gettimeofday(&bag->time->lastmeal, NULL);
+	free_forks(bag);
+}
+
+static void	nap(t_bag *bag)
+{
+	if (bag->time->to_sleep > bag->time->to_die || get_time_left(bag) < bag->time->to_sleep)
 	{
-		kill_philo_during_action(bag, get_time_left(bag), EATING);
-		free_forks(bag);
+		kill_philo_during_action(bag, get_time_left(bag), SLEEPING);
 		pthread_exit((void *) bag);
 	}
 	else
 	{
-		usleep(bag->time->to_eat * 1000);
-		free_forks(bag);
-	}
-	gettimeofday(&bag->time->lastmeal, NULL);
-}
-
-static int	are_forks_free(t_bag *bag)
-{
-	char	status;
-
-	if ((*bag->i) < ((*bag->i) + 1) % *bag->philos_nb)
-		pthread_mutex_lock(&bag->table->mutexs[(*bag->i)]);
-	pthread_mutex_lock(&bag->table->mutexs[((*bag->i) + 1) % *bag->philos_nb]);
-	if (!((*bag->i) < ((*bag->i) + 1) % *bag->philos_nb))
-		pthread_mutex_lock(&bag->table->mutexs[(*bag->i)]);
-	status = (bag->table->forks[*bag->i] == FREE
-			&& bag->table->forks[((*bag->i) + 1) % *bag->philos_nb] == FREE);
-	if (status == 1)
-	{
 		printlog(&bag->table->mutexs[*bag->philos_nb],
-			bag->time->start, *bag->i, FORK);
-		bag->table->forks[*bag->i] = TAKEN;
-		bag->table->forks[((*bag->i) + 1) % *bag->philos_nb] = TAKEN;
+			bag->time->start, *bag->i, SLEEPING);
+		usleep((bag->time->to_sleep) * 1000);
 	}
-	if ((*bag->i) < ((*bag->i) + 1) % *bag->philos_nb)
-		pthread_mutex_unlock(&bag->table->mutexs[(*bag->i)]);
-	pthread_mutex_unlock(&bag->table->mutexs[(*bag->i + 1) % *bag->philos_nb]);
-	if (!((*bag->i) < ((*bag->i) + 1) % *bag->philos_nb))
-		pthread_mutex_unlock(&bag->table->mutexs[(*bag->i)]);
-	return (status);
+	if (are_forks_free(bag) == 0)
+		printlog(&bag->table->mutexs[*bag->philos_nb],
+			bag->time->start, *bag->i, THINKING);
+	else
+	{
+		eat(bag);
+		nap(bag);
+	}
 }
-
-// static void	nap(t_bag *bag)
-// {
-// 	if (get_time_left(bag) + bag->config->to_sleep >= bag->config->to_die)
-// 		kill_philo_during_action(bag, get_time_left(bag), SLEEPING);
-// 	else
-// 		usleep(bag->config->to_sleep * 1000);
-// 	if (is_time_to_die(bag))
-// 	{
-// 		printlog(bag->config->start, bag->i.i, DIED);
-// 		pthread_exit((void *) bag);
-// 	}
-// 	else if (are_forks_free(bag) == TAKEN)
-// 		printlog(bag->config->start, bag->i.i, THINKING);
-// }
 
 void	*simulation(void *adress)
 {
@@ -94,6 +93,7 @@ void	*simulation(void *adress)
 		if (are_forks_free(bag) == 1)
 		{
 			eat(bag);
+			nap(bag);
 		}
 	}
 	printlog(&bag->table->mutexs[*bag->philos_nb],

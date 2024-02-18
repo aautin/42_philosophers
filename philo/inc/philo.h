@@ -73,7 +73,7 @@ void		free_bag(t_bag *bag);
 void		*simulation(void *adress);
 
 // time.c
-int			is_time_to_die(t_bag *bag);
-int			get_time_left(t_bag *bag);
+int				is_time_to_die(t_bag *bag);
+unsigned int	get_time_left(t_bag *bag);
 
 #endif

@@ -28,10 +28,10 @@ int	is_time_to_die(t_bag *bag)
 	return (0);
 }
 
-int	get_time_left(t_bag *bag)
+unsigned int	get_time_left(t_bag *bag)
 {
-	t_time	current;
-	int		milliseconds;
+	t_time			current;
+	unsigned int	milliseconds;
 
 	gettimeofday(&current, NULL);
 	milliseconds = 0;
