@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/17 21:39:50 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/18 19:54:32 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ int	ft_atou(char *str_number)
 		number = (number * 10) + str_number[i++] - '0';
 	return (number * sign);
 }
-void		print_log(t_mutex *print_mutex, t_time start, unsigned int philo_i, char action)
+
+void	printlog(t_mutex *printmutex, t_time start, unsigned int i, char action)
 {
 	t_time	current;
 	int		timestamp;
@@ -45,23 +46,25 @@ void		print_log(t_mutex *print_mutex, t_time start, unsigned int philo_i, char a
 	gettimeofday(&current, NULL);
 	timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
 	timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
-	pthread_mutex_lock(print_mutex);
+	pthread_mutex_lock(printmutex);
 	if (action == FORK)
-		printf("%d %d %s", timestamp, philo_i, "has taken a fork\n");
+		printf("%d %d %s", timestamp, i, "has taken a fork\n");
 	else if (action == EATING)
-		printf("%d %d %s", timestamp, philo_i, "is eating\n");
+		printf("%d %d %s", timestamp, i, "is eating\n");
 	else if (action == SLEEPING)
-		printf("%d %d %s", timestamp, philo_i, "is sleeping\n");
+		printf("%d %d %s", timestamp, i, "is sleeping\n");
 	else if (action == THINKING)
-		printf("%d %d %s", timestamp, philo_i, "is thinking\n");
+		printf("%d %d %s", timestamp, i, "is thinking\n");
 	else if (action == DIED)
-		printf("%d %d %s", timestamp, philo_i, "died\n");
-	pthread_mutex_unlock(print_mutex);
+		printf("%d %d %s", timestamp, i, "died\n");
+	pthread_mutex_unlock(printmutex);
 }
 
 void	kill_philo_during_action(t_bag *bag, int timeleft, char action)
 {
-	print_log(&bag->table->mutexs[*bag->philos_nb], bag->time->start, *bag->i, action);
+	printlog(&bag->table->mutexs[*bag->philos_nb],
+		bag->time->start, *bag->i, action);
 	usleep(timeleft * 1000);
-	print_log(&bag->table->mutexs[*bag->philos_nb], bag->time->start, *bag->i, DIED);
+	printlog(&bag->table->mutexs[*bag->philos_nb],
+		bag->time->start, *bag->i, DIED);
 }

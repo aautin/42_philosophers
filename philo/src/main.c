@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/17 21:28:47 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/18 19:58:09 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	launch_simulation(t_table *table, char *argv[], unsigned short nb)
 {
-	int				i;
+	int			i;
 	t_bag		*bag;
 	t_bag		*adress;
 

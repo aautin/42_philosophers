@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 16:56:13 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/17 22:43:39 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/18 19:56:47 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,15 @@ static void	free_forks(t_bag *bag)
 	pthread_mutex_lock(&bag->table->mutexs[(*bag->i)]);
 	bag->table->forks[*bag->i] = FREE;
 	pthread_mutex_unlock(&bag->table->mutexs[(*bag->i)]);
-	pthread_mutex_lock(&bag->table->mutexs[((*bag->i) + 1) % *bag->philos_nb]);
+	pthread_mutex_lock(&bag->table->mutexs[(*bag->i + 1) % *bag->philos_nb]);
 	bag->table->forks[((*bag->i) + 1) % *bag->philos_nb] = FREE;
-	pthread_mutex_unlock(&bag->table->mutexs[((*bag->i) + 1) % *bag->philos_nb]);
+	pthread_mutex_unlock(&bag->table->mutexs[(*bag->i + 1) % *bag->philos_nb]);
 }
 
 static void	eat(t_bag *bag)
 {
-	print_log(&bag->table->mutexs[*bag->philos_nb], bag->time->start, *bag->i, EATING);
+	printlog(&bag->table->mutexs[*bag->philos_nb],
+		bag->time->start, *bag->i, EATING);
 	if (bag->time->to_eat >= bag->time->to_die)
 	{
 		kill_philo_during_action(bag, get_time_left(bag), EATING);
@@ -48,16 +49,18 @@ static int	are_forks_free(t_bag *bag)
 	pthread_mutex_lock(&bag->table->mutexs[((*bag->i) + 1) % *bag->philos_nb]);
 	if (!((*bag->i) < ((*bag->i) + 1) % *bag->philos_nb))
 		pthread_mutex_lock(&bag->table->mutexs[(*bag->i)]);
-	status = (bag->table->forks[*bag->i] == FREE && bag->table->forks[((*bag->i) + 1) % *bag->philos_nb] == FREE);
+	status = (bag->table->forks[*bag->i] == FREE
+			&& bag->table->forks[((*bag->i) + 1) % *bag->philos_nb] == FREE);
 	if (status == 1)
 	{
-		print_log(&bag->table->mutexs[*bag->philos_nb], bag->time->start, *bag->i, FORK);
+		printlog(&bag->table->mutexs[*bag->philos_nb],
+			bag->time->start, *bag->i, FORK);
 		bag->table->forks[*bag->i] = TAKEN;
 		bag->table->forks[((*bag->i) + 1) % *bag->philos_nb] = TAKEN;
 	}
 	if ((*bag->i) < ((*bag->i) + 1) % *bag->philos_nb)
 		pthread_mutex_unlock(&bag->table->mutexs[(*bag->i)]);
-	pthread_mutex_unlock(&bag->table->mutexs[((*bag->i) + 1) % *bag->philos_nb]);
+	pthread_mutex_unlock(&bag->table->mutexs[(*bag->i + 1) % *bag->philos_nb]);
 	if (!((*bag->i) < ((*bag->i) + 1) % *bag->philos_nb))
 		pthread_mutex_unlock(&bag->table->mutexs[(*bag->i)]);
 	return (status);
@@ -71,11 +74,11 @@ static int	are_forks_free(t_bag *bag)
 // 		usleep(bag->config->to_sleep * 1000);
 // 	if (is_time_to_die(bag))
 // 	{
-// 		print_log(bag->config->start, bag->i.i, DIED);
+// 		printlog(bag->config->start, bag->i.i, DIED);
 // 		pthread_exit((void *) bag);
 // 	}
 // 	else if (are_forks_free(bag) == TAKEN)
-// 		print_log(bag->config->start, bag->i.i, THINKING);
+// 		printlog(bag->config->start, bag->i.i, THINKING);
 // }
 
 void	*simulation(void *adress)
@@ -93,6 +96,7 @@ void	*simulation(void *adress)
 			eat(bag);
 		}
 	}
-	print_log(&bag->table->mutexs[*bag->philos_nb], bag->time->start, *bag->i, DIED);
+	printlog(&bag->table->mutexs[*bag->philos_nb],
+		bag->time->start, *bag->i, DIED);
 	pthread_exit(adress);
 }

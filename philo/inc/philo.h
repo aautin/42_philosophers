@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/17 22:34:43 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/18 19:57:46 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct set_timers
 	t_time			lastmeal;
 }	t_timers;
 
+// philos_nb t_thread and forks, philos_nb+1 mutexs (1 for printf())
 typedef struct s_table
 {
 	t_thread		*philos;
@@ -59,7 +60,7 @@ typedef struct s_bag
 
 // utils.c
 int			ft_atou(char *str_number);
-void		print_log(t_mutex *print_mutex, t_time start, unsigned int philo_i, char action);
+void		printlog(t_mutex *mutex, t_time start, unsigned int i, char action);
 void		kill_philo_during_action(t_bag *bag, int timeleft, char action);
 
 // config.c
