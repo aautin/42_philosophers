@@ -60,7 +60,7 @@ typedef struct s_bag
 // utils.c
 int			ft_atou(char *str_number);
 void		print_log(t_mutex *print_mutex, t_time start, unsigned int philo_i, char action);
-// void		kill_philo_during_sleeping(t_bag *bag, int timeleft);
+void		kill_philo_during_action(t_bag *bag, int timeleft, char action);
 
 // config.c
 void		set_timers(t_timers *timers, char **argv);
@@ -73,5 +73,6 @@ void		*simulation(void *adress);
 
 // time.c
 int			is_time_to_die(t_bag *bag);
+int			get_time_left(t_bag *bag);
 
 #endif

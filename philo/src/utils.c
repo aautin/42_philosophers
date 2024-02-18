@@ -59,9 +59,9 @@ void		print_log(t_mutex *print_mutex, t_time start, unsigned int philo_i, char a
 	pthread_mutex_unlock(print_mutex);
 }
 
-// void	kill_philo_during_action(t_baggage *bag, int timeleft, char action)
-// {
-// 	print_log(bag->config->start, bag->i.i, action);
-// 	usleep(timeleft * 1000);
-// 	print_log(bag->config->start, bag->i.i, DIED);
-// }
+void	kill_philo_during_action(t_bag *bag, int timeleft, char action)
+{
+	print_log(&bag->table->mutexs[*bag->philos_nb], bag->time->start, *bag->i, action);
+	usleep(timeleft * 1000);
+	print_log(&bag->table->mutexs[*bag->philos_nb], bag->time->start, *bag->i, DIED);
+}

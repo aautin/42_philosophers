@@ -38,11 +38,12 @@ int	set_table(t_table *table, unsigned short philos_nb)
 		return (1);
 	}
 	i = 0;
-	while (i < philos_nb + 1)
+	while (i < philos_nb)
 	{
 		table->forks[i] = FREE;
 		pthread_mutex_init(&table->mutexs[i++], NULL);
 	}
+	pthread_mutex_init(&table->mutexs[i], NULL);
 	return (0);
 }
 
