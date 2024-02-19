@@ -50,16 +50,25 @@ static void	free_forks(t_bag *bag)
 
 static void	eat(t_bag *bag)
 {
-	printlog(&bag->table->mutexs[*bag->philos_nb],
-		bag->time->start, *bag->i, EATING);
-	usleep(bag->time->to_eat * 1000);
 	gettimeofday(&bag->time->lastmeal, NULL);
-	free_forks(bag);
+	if (get_time_left(bag) < bag->time->to_eat)
+	{
+		kill_philo_during_action(bag, get_time_left(bag), EATING);
+		free_forks(bag);
+		pthread_exit((void *) bag);
+	}
+	else
+	{
+		printlog(&bag->table->mutexs[*bag->philos_nb],
+			bag->time->start, *bag->i, EATING);
+		usleep(bag->time->to_eat * 1000);
+		free_forks(bag);
+	}
 }
 
 static void	nap(t_bag *bag)
 {
-	if (bag->time->to_sleep > bag->time->to_die || get_time_left(bag) < bag->time->to_sleep)
+	if (get_time_left(bag) < bag->time->to_sleep)
 	{
 		kill_philo_during_action(bag, get_time_left(bag), SLEEPING);
 		pthread_exit((void *) bag);
@@ -68,7 +77,7 @@ static void	nap(t_bag *bag)
 	{
 		printlog(&bag->table->mutexs[*bag->philos_nb],
 			bag->time->start, *bag->i, SLEEPING);
-		usleep((bag->time->to_sleep) * 1000);
+		usleep(bag->time->to_sleep * 1000);
 	}
 	if (are_forks_free(bag) == 0)
 		printlog(&bag->table->mutexs[*bag->philos_nb],
