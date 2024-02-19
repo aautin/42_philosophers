@@ -41,3 +41,13 @@ unsigned int	get_time_left(t_bag *bag)
 		/ 1000;
 	return (bag->time->to_die - milliseconds);
 }
+
+void	kill_philo_during_action(t_bag *bag, int timeleft, char action)
+{
+	printlog(&bag->table->mutexs[*bag->philos_nb],
+		bag->time->start, *bag->i, action);
+	change_finished_status(bag, -1);
+	usleep(timeleft * 1000);
+	printlog(&bag->table->mutexs[*bag->philos_nb],
+		bag->time->start, *bag->i, DIED);
+}

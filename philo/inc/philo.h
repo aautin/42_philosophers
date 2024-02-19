@@ -45,6 +45,7 @@ typedef struct set_timers
 typedef struct s_table
 {
 	t_thread		*philos;
+	char			*finished;
 	t_mutex			*mutexs;
 	char			*forks;
 }	t_table;
@@ -56,14 +57,17 @@ typedef struct s_bag
 	t_timers		*time;
 	unsigned short	*i;
 	unsigned short	*philos_nb;
+	int				*meals_left;
 }	t_bag;
 
 // utils.c
-int				ft_atou(char *str_number);
+unsigned int	ft_atou(char *str_number);
 void			printlog(t_mutex *mutex, t_time time, unsigned int i, char act);
-void			kill_philo_during_action(t_bag *bag, int timeleft, char action);
+void			change_finished_status(t_bag *bag, char new_status);
+void			check_stop(t_bag *bag);
 
 // config.c
+int				are_argvs_correct(int argc, char *argv[]);
 void			set_timers(t_timers *timers, char **argv);
 int				set_table(t_table *table, unsigned short philos_nb);
 void			free_table(t_table *table, unsigned short philos_nb);
@@ -75,5 +79,6 @@ void			*simulation(void *adress);
 // time.c
 int				is_time_to_die(t_bag *bag);
 unsigned int	get_time_left(t_bag *bag);
+void			kill_philo_during_action(t_bag *bag, int timeleft, char action);
 
 #endif

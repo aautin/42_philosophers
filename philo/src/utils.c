@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int	ft_atou(char *str_number)
+unsigned int	ft_atou(char *str_number)
 {
 	unsigned int	number;
 	unsigned int	i;
@@ -24,12 +24,8 @@ int	ft_atou(char *str_number)
 	while ((9 <= str_number[i] && str_number[i] <= 13) || str_number[i] == ' ')
 		i++;
 	sign = 1;
-	if (str_number[i] == '-' || str_number[i] == '+')
-	{
-		if (str_number[i] == '-')
-			sign = -1;
+	if (str_number[i] == '+')
 		i++;
-	}
 	while (str_number[i] == '0')
 		i++;
 	number = 0;
@@ -63,11 +59,49 @@ void	printlog(t_mutex *printmutex, t_time start, unsigned int i, char action)
 	pthread_mutex_unlock(printmutex);
 }
 
-void	kill_philo_during_action(t_bag *bag, int timeleft, char action)
+void	change_finished_status(t_bag *bag, char new_status)
 {
-	printlog(&bag->table->mutexs[*bag->philos_nb],
-		bag->time->start, *bag->i, action);
-	usleep(timeleft * 1000);
-	printlog(&bag->table->mutexs[*bag->philos_nb],
-		bag->time->start, *bag->i, DIED);
+	pthread_mutex_lock(&bag->table->mutexs[*bag->philos_nb + 1]);
+	bag->table->finished[*bag->i] = new_status;
+	pthread_mutex_unlock(&bag->table->mutexs[*bag->philos_nb + 1]);
+}
+
+static void	check_dead_philo(t_bag *bag)
+{
+	int	i;
+
+	i = 0;
+	while (i < *bag->philos_nb)
+	{
+		if (bag->table->finished[i++] == -1)
+		{
+			pthread_mutex_unlock(&bag->table->mutexs[*bag->philos_nb + 1]);
+			pthread_exit((void *) bag);
+		}
+	}
+}
+
+void	check_stop(t_bag *bag)
+{
+	int		i;
+	char	stop;
+
+	i = 0;
+	pthread_mutex_lock(&bag->table->mutexs[*bag->philos_nb + 1]);
+	check_dead_philo(bag);
+	if (*bag->meals_left != -1)
+	{
+		stop = 1;
+		while (i < *bag->philos_nb)
+		{
+			if (bag->table->finished[i++] != 1)
+				stop = 0;
+		}
+		if (stop == 1)
+		{
+			pthread_mutex_unlock(&bag->table->mutexs[*bag->philos_nb + 1]);
+			pthread_exit((void *) bag);
+		}
+	}
+	pthread_mutex_unlock(&bag->table->mutexs[*bag->philos_nb + 1]);
 }

@@ -25,9 +25,14 @@ static void	launch_simulation(t_table *table, char *argv[], unsigned short nb)
 		bag->time = (t_timers *)malloc(sizeof(t_timers));
 		bag->i = (unsigned short *)malloc(sizeof(unsigned short));
 		bag->philos_nb = (unsigned short *)malloc(sizeof(unsigned short));
+		bag->meals_left = (int *)malloc(sizeof(int));
 		bag->table = table;
 		*bag->i = i;
 		*bag->philos_nb = nb;
+		if (argv[5] == NULL)
+			*bag->meals_left = -1;
+		else
+			*bag->meals_left = ft_atou(argv[5]);
 		set_timers(bag->time, argv);
 		pthread_create(&table->philos[i++], NULL, &simulation, bag);
 	}
@@ -44,8 +49,10 @@ int	main(int argc, char *argv[])
 	t_table			table;
 	unsigned short	philos_nb;
 
-	if (argc == 5)
+	if (argc == 5 || argc == 6)
 	{
+		if (are_argvs_correct(argc, argv) == 0)
+			return (1);
 		philos_nb = (unsigned short) ft_atou(argv[1]);
 		if (set_table(&table, philos_nb) == 1)
 			return (1);
@@ -56,7 +63,7 @@ int	main(int argc, char *argv[])
 	else
 	{
 		printf("Wrong arguments\nMust be: ");
-		printf("nb_of_philosophers time_to_die time_to_eat time_to_sleep\n");
+		printf("nb_of_philos time_to_die _eat _sleep [meals_philos_must_eat]\n");
 		return (1);
 	}
 }
