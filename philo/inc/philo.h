@@ -59,18 +59,18 @@ typedef struct s_bag
 }	t_bag;
 
 // utils.c
-int			ft_atou(char *str_number);
-void		printlog(t_mutex *mutex, t_time start, unsigned int i, char action);
-void		kill_philo_during_action(t_bag *bag, int timeleft, char action);
+int				ft_atou(char *str_number);
+void			printlog(t_mutex *mutex, t_time time, unsigned int i, char act);
+void			kill_philo_during_action(t_bag *bag, int timeleft, char action);
 
 // config.c
-void		set_timers(t_timers *timers, char **argv);
-int			set_table(t_table *table, unsigned short philos_nb);
-void		free_table(t_table *table, unsigned short philos_nb);
-void		free_bag(t_bag *bag);
+void			set_timers(t_timers *timers, char **argv);
+int				set_table(t_table *table, unsigned short philos_nb);
+void			free_table(t_table *table, unsigned short philos_nb);
+void			free_bag(t_bag *bag);
 
 //simulation.c
-void		*simulation(void *adress);
+void			*simulation(void *adress);
 
 // time.c
 int				is_time_to_die(t_bag *bag);
