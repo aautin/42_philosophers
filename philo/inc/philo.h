@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/18 19:57:46 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/20 16:03:19 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ void			change_finished_status(t_bag *bag, char new_status);
 void			check_stop(t_bag *bag);
 
 // config.c
-int				are_argvs_correct(int argc, char *argv[]);
 void			set_timers(t_timers *timers, char **argv);
 int				set_table(t_table *table, unsigned short philos_nb);
 void			free_table(t_table *table, unsigned short philos_nb);
@@ -79,6 +78,10 @@ void			*simulation(void *adress);
 // time.c
 int				is_time_to_die(t_bag *bag);
 unsigned int	get_time_left(t_bag *bag);
-void			kill_philo_during_action(t_bag *bag, int timeleft, char action);
+void			kill_philo_during_action(t_bag *bag, int time, char act);		
+
+// fork.c
+int				are_forks_free(t_bag *bag);
+void			free_forks(t_bag *bag);
 
 #endif

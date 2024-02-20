@@ -3,6 +3,7 @@ NAME			:=	philo
 INCPATH			:=	-I inc
 
 FILES			:=	config.c		\
+					fork.c			\
 					simulation.c	\
 					time.c			\
 					utils.c			\

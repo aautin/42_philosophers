@@ -70,10 +70,10 @@ static void	check_dead_philo(t_bag *bag)
 {
 	int	i;
 
-	i = 0;
-	while (i < *bag->philos_nb)
+	i = -1;
+	while (++i < *bag->philos_nb)
 	{
-		if (bag->table->finished[i++] == -1)
+		if (bag->table->finished[i] == -1)
 		{
 			pthread_mutex_unlock(&bag->table->mutexs[*bag->philos_nb + 1]);
 			pthread_exit((void *) bag);
@@ -86,15 +86,15 @@ void	check_stop(t_bag *bag)
 	int		i;
 	char	stop;
 
-	i = 0;
 	pthread_mutex_lock(&bag->table->mutexs[*bag->philos_nb + 1]);
 	check_dead_philo(bag);
 	if (*bag->meals_left != -1)
 	{
 		stop = 1;
-		while (i < *bag->philos_nb)
+		i = -1;
+		while (++i < *bag->philos_nb)
 		{
-			if (bag->table->finished[i++] != 1)
+			if (bag->table->finished[i] != 1)
 				stop = 0;
 		}
 		if (stop == 1)
