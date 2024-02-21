@@ -1,5 +1,6 @@
 #include <stdlib.h>
 // malloc
+// random
 
 #include <sys/time.h>
 // gettimeofday
@@ -14,6 +15,7 @@
 // usleep
 
 #include <pthread.h>
+#include <bits/pthreadtypes.h>
 // pthread_create, pthread_detach, pthread_join, pthread_mutex_init,
 // pthread_mutex_destroy, pthread_mutex_lock, pthread_mutex_unlock
 
@@ -192,8 +194,7 @@ void	*call(void *adress_tab)
 	{
 		while (pthread_mutex_trylock((pthread_mutex_t *) tab[1]) != 0 && time.tv_sec - time_start < 10)
 			gettimeofday(&time, NULL);
-		if (time.tv_sec - time_start >= 10)
-			pthread_exit(tab);
+		if (time.tv_sec - time_start >= 10)		pthread_exit(tab);
 		printf("user[%d] is having a call\n", *(int *) tab[3]);
 		sleep(*(int *) tab[3] / 2);
 		pthread_mutex_unlock((pthread_mutex_t *) tab[1]);
@@ -226,6 +227,29 @@ void	*pthread_exiting(void *adress)
 	pthread_create(&thread, NULL, &print, NULL);
 	// pthread_exit(NULL);
 	return (0);
+}
+
+void	*roll_dice(void *arg)
+{
+	char 				*results = (char *)((void **) arg)[0]; 
+	pthread_mutex_t		*mutex = (pthread_mutex_t *)((void **) arg)[1]; 
+	pthread_barrier_t	*barrier = (pthread_barrier_t *)((void **) arg)[2];
+	int 				*i = (int *)((void **) arg)[3]; 
+
+	long result = (rand() % 6) + 1;
+	pthread_mutex_lock(mutex);
+	results[*i] = result;
+	printf("[%d]:%d\n", *i, results[*i]);
+	pthread_mutex_unlock(mutex);
+	pthread_barrier_wait(barrier);
+	pthread_barrier_wait(barrier);
+	pthread_mutex_lock(mutex);
+	if (results[*i] == 1)
+		printf("[%d]:won\n", *i);
+	else
+		printf("[%d]:lost\n", *i);
+	pthread_mutex_unlock(mutex);
+	return (arg);
 }
 
 int main(int argc, char *argv[])
@@ -501,4 +525,62 @@ int main(int argc, char *argv[])
 	// }
 	// pthread_exit(0);
 	// //return (0);
+
+
+
+	// trying to use the pthread_barrier type and linked functions
+	// practical example:
+	//	Every thread rolls a dice, saved its value in a common array. The main thread
+	//	calculates the winner(s) then. Each thread prints its lose or win message.
+	pthread_t			players[10];
+	unsigned char		results[10];
+	pthread_mutex_t		results_mutex;
+	pthread_barrier_t	barrier;
+
+	srand(time(0));
+	pthread_mutex_init(&results_mutex, NULL);
+	pthread_barrier_init(&barrier, NULL, 11);
+	for (int i = 0; i < 10; i++)
+	{
+		usleep(20000);
+		int *j = (int *)malloc(sizeof(int));
+		*j = i;
+		void **arg = (void **)malloc(4 * sizeof(void *));
+		arg[0] = results;
+		arg[1] = &results_mutex;
+		arg[2] = &barrier;
+		arg[3] = j;
+		if (pthread_create(&players[i], NULL, &roll_dice, arg) != 0)
+			perror("Error during thread creation");
+	}
+	pthread_barrier_wait(&barrier);
+	int max = 1;
+	for (int i = 0; i < 10; i++)
+	{
+		if (results[i] > max)
+			max = results[i];
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		if (results[i] == max)
+			results[i] = 1;
+		else
+			results[i] = 0;
+	}
+	pthread_barrier_wait(&barrier);
+	
+	for (int i = 0; i < 10; i++)
+	{
+		void *thread_returnadress;
+		if (pthread_join(players[i], &thread_returnadress) != 0)
+			perror("Error during thread join");
+		else
+		{
+			free((int *)((void **) thread_returnadress)[3]);
+			free(thread_returnadress);
+		}
+	}
+	pthread_mutex_destroy(&results_mutex);
+	pthread_barrier_destroy(&barrier);
+	return (0);
 }
