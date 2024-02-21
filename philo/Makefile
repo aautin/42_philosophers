@@ -2,9 +2,10 @@ NAME			:=	philo
 
 INCPATH			:=	-I inc
 
-FILES			:=	config.c		\
+FILES			:=	bag.c			\
 					fork.c			\
 					simulation.c	\
+					table.c			\
 					time.c			\
 					utils.c			\
 					main.c	

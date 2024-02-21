@@ -6,11 +6,18 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 19:12:20 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/17 21:28:47 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/21 12:13:59 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	set_timers(t_timers *timers, char **argv)
+{
+	timers->to_die = ft_atou(argv[2]);
+	timers->to_eat = ft_atou(argv[3]);
+	timers->to_sleep = ft_atou(argv[4]);
+}
 
 int	is_time_to_die(t_bag *bag)
 {

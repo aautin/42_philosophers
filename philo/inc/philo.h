@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/20 16:03:19 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/21 12:14:05 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,16 +66,18 @@ void			printlog(t_mutex *mutex, t_time time, unsigned int i, char act);
 void			change_finished_status(t_bag *bag, char new_status);
 void			check_stop(t_bag *bag);
 
-// config.c
-void			set_timers(t_timers *timers, char **argv);
+// bag.c
+void			free_bag(t_bag *bag);
+
+// table.c
 int				set_table(t_table *table, unsigned short philos_nb);
 void			free_table(t_table *table, unsigned short philos_nb);
-void			free_bag(t_bag *bag);
 
 //simulation.c
 void			*simulation(void *adress);
 
 // time.c
+void			set_timers(t_timers *timers, char **argv);
 int				is_time_to_die(t_bag *bag);
 unsigned int	get_time_left(t_bag *bag);
 void			kill_philo_during_action(t_bag *bag, int time, char act);		

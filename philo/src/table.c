@@ -1,23 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.c                                           :+:      :+:    :+:   */
+/*   table.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/15 16:30:43 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/20 16:00:56 by aautin           ###   ########.fr       */
+/*   Created: 2024/02/21 12:12:38 by aautin            #+#    #+#             */
+/*   Updated: 2024/02/21 12:12:41 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	set_timers(t_timers *timers, char **argv)
-{
-	timers->to_die = ft_atou(argv[2]);
-	timers->to_eat = ft_atou(argv[3]);
-	timers->to_sleep = ft_atou(argv[4]);
-}
 
 static void	set_finished_string(t_table *table, unsigned short philos_nb)
 {
@@ -71,17 +64,4 @@ void	free_table(t_table *table, unsigned short philos_nb)
 	free(table->finished);
 	free(table->mutexs);
 	free(table->philos);
-}
-
-void	free_bag(t_bag *bag)
-{
-	if (bag->philos_nb)
-		free(bag->philos_nb);
-	if (bag->i)
-		free(bag->i);
-	if (bag->time)
-		free(bag->time);
-	if (bag->meals_left)
-		free(bag->meals_left);
-	free(bag);
 }
