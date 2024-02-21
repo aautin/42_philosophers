@@ -202,6 +202,31 @@ void	*call(void *adress_tab)
 	pthread_exit(tab);
 }
 
+void	*print(void *adress)
+{
+	(void) adress;
+	usleep(2000000);
+	write(1, "Here is my message\n", 19);
+	pthread_exit(NULL);
+}
+
+void	*returning(void *adress)
+{
+	(void) adress;
+	pthread_t	thread;
+	pthread_create(&thread, NULL, &print, NULL);
+	// pthread_exit(NULL);
+	return (0);
+}
+
+void	*pthread_exiting(void *adress)
+{
+	(void) adress;
+	pthread_t	thread;
+	pthread_create(&thread, NULL, &print, NULL);
+	// pthread_exit(NULL);
+	return (0);
+}
 
 int main(int argc, char *argv[])
 {
@@ -421,35 +446,59 @@ int main(int argc, char *argv[])
 	// discover the broadcast functions and practice again the cond variables
 	// 10 threads using, one after the other, a phone. Each thread make a call 
 	// during its index in secondes.
-	pthread_t		users[10];
-	char			phone;
-	pthread_mutex_t	phone_mutex;
-	pthread_cond_t	phone_cond;
-	void			**adress_tab;
+	// pthread_t		users[10];
+	// char			phone;
+	// pthread_mutex_t	phone_mutex;
+	// pthread_cond_t	phone_cond;
+	// void			**adress_tab;
 
-	pthread_mutex_init(&phone_mutex, NULL);
-	pthread_cond_init(&phone_cond, NULL);
-	for (int i = 0; i < 10; i++)
-	{
-		int	*a = (int *)malloc(sizeof(int));
-		*a = i;
-		adress_tab = (void **)malloc(4 * sizeof(void *));
-		adress_tab[0] = &phone;
-		adress_tab[1] = &phone_mutex;
-		adress_tab[2] = &phone_cond;
-		adress_tab[3] = a;
-		if (pthread_create(&users[i], NULL, &call, adress_tab) != 0)
-			perror("Error during thread creation");
-	}
-	for (int j = 0; j < 10; j++)
-	{
-		void **tab;
-		if (pthread_join(users[j], (void *) &tab) != 0)
-			perror("Error during thread join");
-		free(tab);
-	}
+	// pthread_mutex_init(&phone_mutex, NULL);
+	// pthread_cond_init(&phone_cond, NULL);
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	int	*a = (int *)malloc(sizeof(int));
+	// 	*a = i;
+	// 	adress_tab = (void **)malloc(4 * sizeof(void *));
+	// 	adress_tab[0] = &phone;
+	// 	adress_tab[1] = &phone_mutex;
+	// 	adress_tab[2] = &phone_cond;
+	// 	adress_tab[3] = a;
+	// 	if (pthread_create(&users[i], NULL, &call, adress_tab) != 0)
+	// 		perror("Error during thread creation");
+	// }
+	// for (int j = 0; j < 10; j++)
+	// {
+	// 	void **tab;
+	// 	if (pthread_join(users[j], (void *) &tab) != 0)
+	// 		perror("Error during thread join");
+	// 	free(tab);
+	// }
 
-	pthread_mutex_destroy(&phone_mutex);
-	pthread_cond_destroy(&phone_cond);
-	return (0);
+	// pthread_mutex_destroy(&phone_mutex);
+	// pthread_cond_destroy(&phone_cond);
+	
+	
+
+	// // the difference btween pthread_exit((void*) var) and return((void*) var):
+	// // p...exit() is same as return in every case but one => in mainfunction of
+	// // main pthread, the return is returning the value to the prgm's parent process
+	// // but also exit the prgrm. So, p...exit used in this precise case enables us
+	// // to not exit the process's prgm, just return the value, other pthreads will continue... 
+	// pthread_t	child_thread[2];
+
+	// for (int i = 0; i < 2; i++)
+	// {
+	// 	if (i == 0)
+	// 	{
+	// 		if (pthread_create(&child_thread[i], NULL, &returning, NULL) != 0)
+	// 			perror("Error during thread creation");
+	// 	}
+	// 	else
+	// 	{
+	// 		if (pthread_create(&child_thread[i], NULL, &pthread_exiting, NULL) != 0)
+	// 			perror("Error during thread creation");
+	// 	}
+	// }
+	// pthread_exit(0);
+	// //return (0);
 }
