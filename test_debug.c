@@ -1,3 +1,5 @@
+#include <semaphore.h>
+
 #include <stdlib.h>
 // malloc
 // random
@@ -271,6 +273,26 @@ void	*recursive_print(void *str)
 	pthread_mutex_unlock(&p_mutex);
 	lock_times--;
 	return (NULL);
+}
+
+void	*play_game(void *arg)
+{
+	sem_t 	*sem = (sem_t *)((void **)(arg))[0];
+	int 	*index = (int *)((void **)(arg))[1];
+	long	play_time;
+
+	printf("[%d]: Enter in queue...\n", *index);
+	sem_wait(sem);
+	play_time = (rand() % 3) + 1;
+	printf("[%d]: Go play %ldsec\n",  *index, play_time);
+	for (int i = 0; i < play_time; i++)
+	{
+		printf("[%d]: %ld\n", *index, play_time - i);
+		sleep(1);
+	}
+	printf("[%d]: Leaving game.\n", *index);
+	sem_post(sem);
+	pthread_exit(arg);
 }
 
 int main(int argc, char *argv[])
@@ -636,30 +658,69 @@ int main(int argc, char *argv[])
 
 
 
-	// a mutex has attributes too, let's look on an important one: the recursive type.
-	// This type of mutex can be locked multiple times by the same thread and then
-	// must be unlocked the same nb of times. So if a threadroutine is calling
-	// "p..lock(&mutex)" twice it won't wait infinitely but count another lock degree.
-	// The other threads waiting to lock will be enable to lock the mutex when its 
-	// degree of lock is back to zero (unlocked as many times as lock earlier).
-	// Type of mutex usually used for recursive functions.
-	// Here is a practical example of the recursive_typed mutex usage:
-	pthread_t			p_thread;
-	pthread_mutexattr_t	mutex_attributes;
-	// global var : pthread_mutex_t 	p_mutex;
+	// // a mutex has attributes too, let's look on an important one: the recursive type.
+	// // This type of mutex can be locked multiple times by the same thread and then
+	// // must be unlocked the same nb of times. So if a threadroutine is calling
+	// // "p..lock(&mutex)" twice it won't wait infinitely but count another lock degree.
+	// // The other threads waiting to lock will be enable to lock the mutex when its 
+	// // degree of lock is back to zero (unlocked as many times as lock earlier).
+	// // Type of mutex usually used for recursive functions.
+	// // Here is a practical example of the recursive_typed mutex usage:
+	// pthread_t			p_thread;
+	// pthread_mutexattr_t	mutex_attributes;
+	// // global var : pthread_mutex_t 	p_mutex;
 
-	pthread_mutexattr_init(&mutex_attributes);
-	pthread_mutexattr_settype(&mutex_attributes, PTHREAD_MUTEX_RECURSIVE);
-	pthread_mutex_init(&p_mutex, &mutex_attributes);
-	if (pthread_create(&p_thread, NULL, &recursive_print, "oui") != 0)
-		perror("Error during thread creation");
-	else
-	{
-		if (pthread_join(p_thread, NULL) != 0)
-			perror("Error during thread join");
-		else
-			printf("%d\n", lock_times);
-	}
-	pthread_mutexattr_destroy(&mutex_attributes);
-	pthread_mutex_destroy(&p_mutex);
+	// pthread_mutexattr_init(&mutex_attributes);
+	// pthread_mutexattr_settype(&mutex_attributes, PTHREAD_MUTEX_RECURSIVE);
+	// pthread_mutex_init(&p_mutex, &mutex_attributes);
+	// if (pthread_create(&p_thread, NULL, &recursive_print, "oui") != 0)
+	// 	perror("Error during thread creation");
+	// else
+	// {
+	// 	if (pthread_join(p_thread, NULL) != 0)
+	// 		perror("Error during thread join");
+	// 	else
+	// 		printf("%d\n", lock_times);
+	// }
+	// pthread_mutexattr_destroy(&mutex_attributes);
+	// pthread_mutex_destroy(&p_mutex);
+
+
+
+	// // new way to coordinate threads (avoid dataraces & stuffs)=> the semaphores
+	// // semaphore: a counter containing nbr of threads which can pass a wait_gate
+	// //		- pass a sem_wait() decremente a semaphore
+	// //			-> sem_wait() makes threads wait at it until sem > 0
+	// //		- pass a sem_post() incremente a semaphore
+	// // practical example to implement:
+	// // a too bigger number of players/threads wanna play to a video game, just 2
+	// // can play at the same time. Let's implement a queue for this game.
+	// pthread_t	players_th[10];
+	// sem_t		queue;
+
+	// sem_init(&queue, 0, 2);
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	int *index = (int *)malloc(sizeof(int));
+	// 	void **arg = (void **)malloc(2 * sizeof(void *));
+	// 	*index = i;
+	// 	arg[0] = &queue;
+	// 	arg[1] = index;
+	// 	if (pthread_create(&players_th[i], NULL, &play_game, arg) != 0)
+	// 		perror("Error during thread creation");
+	// }
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	void **adress;
+	// 	if (pthread_join(players_th[i], (void **) &adress) != 0)
+	// 		perror("Error during thread join");
+	// 	free((int *) adress[1]);
+	// 	free(adress);
+	// }
+	// sem_destroy(&queue);
+
+
+
+	// 
+	return (0);
 }
