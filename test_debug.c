@@ -206,9 +206,9 @@ void	*call(void *adress_tab)
 void	*print(void *adress)
 {
 	(void) adress;
-	usleep(2000000);
+	usleep(3000000);
 	write(1, "Here is my message\n", 19);
-	pthread_exit(NULL);
+	return (NULL);
 }
 
 void	*returning(void *adress)
@@ -528,59 +528,88 @@ int main(int argc, char *argv[])
 
 
 
-	// trying to use the pthread_barrier type and linked functions
-	// practical example:
-	//	Every thread rolls a dice, saved its value in a common array. The main thread
-	//	calculates the winner(s) then. Each thread prints its lose or win message.
-	pthread_t			players[10];
-	unsigned char		results[10];
-	pthread_mutex_t		results_mutex;
-	pthread_barrier_t	barrier;
+	// // trying to use the pthread_barrier type and linked functions
+	// // practical example:
+	// //	Every thread rolls a dice, saved its value in a common array. The main thread
+	// //	calculates the winner(s) then. Each thread prints its lose or win message.
+	// pthread_t			players[10];
+	// unsigned char		results[10];
+	// pthread_mutex_t		results_mutex;
+	// pthread_barrier_t	barrier;
 
-	srand(time(0));
-	pthread_mutex_init(&results_mutex, NULL);
-	pthread_barrier_init(&barrier, NULL, 11);
-	for (int i = 0; i < 10; i++)
-	{
-		usleep(20000);
-		int *j = (int *)malloc(sizeof(int));
-		*j = i;
-		void **arg = (void **)malloc(4 * sizeof(void *));
-		arg[0] = results;
-		arg[1] = &results_mutex;
-		arg[2] = &barrier;
-		arg[3] = j;
-		if (pthread_create(&players[i], NULL, &roll_dice, arg) != 0)
-			perror("Error during thread creation");
-	}
-	pthread_barrier_wait(&barrier);
-	int max = 1;
-	for (int i = 0; i < 10; i++)
-	{
-		if (results[i] > max)
-			max = results[i];
-	}
-	for (int i = 0; i < 10; i++)
-	{
-		if (results[i] == max)
-			results[i] = 1;
-		else
-			results[i] = 0;
-	}
-	pthread_barrier_wait(&barrier);
+	// srand(time(0));
+	// pthread_mutex_init(&results_mutex, NULL);
+	// pthread_barrier_init(&barrier, NULL, 11);
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	usleep(20000);
+	// 	int *j = (int *)malloc(sizeof(int));
+	// 	*j = i;
+	// 	void **arg = (void **)malloc(4 * sizeof(void *));
+	// 	arg[0] = results;
+	// 	arg[1] = &results_mutex;
+	// 	arg[2] = &barrier;
+	// 	arg[3] = j;
+	// 	if (pthread_create(&players[i], NULL, &roll_dice, arg) != 0)
+	// 		perror("Error during thread creation");
+	// }
+	// pthread_barrier_wait(&barrier);
+	// int max = 1;
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	if (results[i] > max)
+	// 		max = results[i];
+	// }
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	if (results[i] == max)
+	// 		results[i] = 1;
+	// 	else
+	// 		results[i] = 0;
+	// }
+	// pthread_barrier_wait(&barrier);
 	
-	for (int i = 0; i < 10; i++)
-	{
-		void *thread_returnadress;
-		if (pthread_join(players[i], &thread_returnadress) != 0)
-			perror("Error during thread join");
-		else
-		{
-			free((int *)((void **) thread_returnadress)[3]);
-			free(thread_returnadress);
-		}
-	}
-	pthread_mutex_destroy(&results_mutex);
-	pthread_barrier_destroy(&barrier);
-	return (0);
+	// for (int i = 0; i < 10; i++)
+	// {
+	// 	void *thread_returnadress;
+	// 	if (pthread_join(players[i], &thread_returnadress) != 0)
+	// 		perror("Error during thread join");
+	// 	else
+	// 	{
+	// 		free((int *)((void **) thread_returnadress)[3]);
+	// 		free(thread_returnadress);
+	// 	}
+	// }
+	// pthread_mutex_destroy(&results_mutex);
+	// pthread_barrier_destroy(&barrier);
+
+
+
+	// Undestand the concept of "thread detached":
+	// detachedthread isn't joinable, can't wait for its execution's end. A thread
+	// must be cleared with join, but a detached don't, it's clearing itself.
+	// Bcause mainthread won't wait a detachedthread, main fction must be finished
+	// with a p.._exit and not return, to avoid direct automatic exit (so detached
+	// can finish its exec). We can either detach after creation or create detach
+	// with the 2nd argument of pthread_create().
+	// -->	to set the attribute of the pthread and create it as detach right after
+	// 		is safer because there is risk for a non-detached pthread to finish its
+	//		its execution earlier than the pthread_detach() function is called.
+	// Here is the both ways to have a detach thread:
+	//		pthread_detach() way:
+	pthread_t	detached1;
+
+	if (pthread_create(&detached1, NULL, &print, NULL) != 0)
+		perror("Error during thread creation");
+	pthread_detach(detached1);
+	//		safer way:
+	pthread_t	detached2;
+	pthread_attr_t	attribute;
+
+	pthread_attr_init(&attribute);
+	pthread_attr_setdetachstate(&attribute, PTHREAD_CREATE_DETACHED);
+	if (pthread_create(&detached2, &attribute, &print, NULL) != 0)
+		perror("Error during thread creation");
+	pthread_attr_destroy(&attribute);
+	pthread_exit(0);
 }
