@@ -6,22 +6,24 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 12:12:38 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/21 12:12:41 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/21 13:11:40 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	set_finished_string(t_table *table, unsigned short philos_nb)
+void	set_finished(t_table *table, char statut, unsigned short philos_nb)
 {
 	unsigned int	i;
 
 	i = 0;
+	pthread_mutex_lock(&table->mutexs[philos_nb + 1]);
 	while (i < philos_nb)
 	{
-		table->finished[i] = 0;
+		table->finished[i] = statut;
 		i++;
 	}
+	pthread_mutex_unlock(&table->mutexs[philos_nb + 1]);
 }
 
 int	set_table(t_table *table, unsigned short philos_nb)
@@ -50,7 +52,7 @@ int	set_table(t_table *table, unsigned short philos_nb)
 	i = 0;
 	while (i < philos_nb + 2)
 		pthread_mutex_init(&table->mutexs[i++], NULL);
-	return (set_finished_string(table, philos_nb), 0);
+	return (set_finished(table, 0, philos_nb), 0);
 }
 
 void	free_table(t_table *table, unsigned short philos_nb)

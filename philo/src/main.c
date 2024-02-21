@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/20 16:03:37 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/21 13:14:51 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,34 @@ static int	are_argvs_correct(int argc, char *argv[])
 	return (1);
 }
 
-static void	launch_simulation(t_table *table, char *argv[], unsigned short nb)
+static void	finish_threads(t_table *table, int threads_created)
+{
+	int			i;
+	t_bag		*adress;
+
+	i = 0;
+	while (i < threads_created)
+	{
+		pthread_join(table->philos[i++], (void **) &adress);
+		free_bag(adress);
+	}
+}
+
+static int	launch_simulation(t_table *table, char *argv[], unsigned short nb)
 {
 	int			i;
 	t_bag		*bag;
-	t_bag		*adress;
 
 	i = 0;
 	while (i < nb)
 	{
 		bag = (t_bag *)malloc(sizeof(t_bag));
-		bag->time = (t_timers *)malloc(sizeof(t_timers));
-		bag->i = (unsigned short *)malloc(sizeof(unsigned short));
-		bag->philos_nb = (unsigned short *)malloc(sizeof(unsigned short));
-		bag->meals_left = (int *)malloc(sizeof(int));
+		if (bag == NULL)
+			return (set_finished(table, -1, nb), finish_threads(table, i), 1);
+		if (alloc_bag_components(bag) == 1)
+	
+			return (free_bag(bag), set_finished(table, i, nb),
+				finish_threads(table, i), 1);
 		bag->table = table;
 		*bag->i = i;
 		*bag->philos_nb = nb;
@@ -61,14 +75,11 @@ static void	launch_simulation(t_table *table, char *argv[], unsigned short nb)
 		else
 			*bag->meals_left = ft_atou(argv[5]);
 		set_timers(bag->time, argv);
-		pthread_create(&table->philos[i++], NULL, &simulation, bag);
+		if (pthread_create(&table->philos[i++], NULL, &simulation, bag) != 0)
+			return (printf("Error during pthread_create execution\n"), 1);
 	}
-	i = 0;
-	while (i < nb)
-	{
-		pthread_join(table->philos[i++], (void **) &adress);
-		free_bag(adress);
-	}
+	;
+	return (finish_threads(table, nb), 0);
 }
 
 int	main(int argc, char *argv[])
