@@ -252,6 +252,27 @@ void	*roll_dice(void *arg)
 	return (arg);
 }
 
+pthread_mutex_t 	p_mutex;
+int	lock_times = 0;
+void	*recursive_print(void *str)
+{
+	int len = 0;
+	pthread_mutex_lock(&p_mutex);
+	lock_times++;
+	for (int i = 0; ((char *)str)[i]; i++)
+		len++;
+	for (int i = 0; i < len; i++)
+	{
+		printf("%c", ((char *)str)[i]);
+	}
+	printf("\n");
+	if (len > 1)
+		recursive_print(((char *) str) + 1);
+	pthread_mutex_unlock(&p_mutex);
+	lock_times--;
+	return (NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	// valgrind --tool=helgrind (--tool=drd ou -fsanitize=thread)
@@ -585,31 +606,60 @@ int main(int argc, char *argv[])
 
 
 
-	// Undestand the concept of "thread detached":
-	// detachedthread isn't joinable, can't wait for its execution's end. A thread
-	// must be cleared with join, but a detached don't, it's clearing itself.
-	// Bcause mainthread won't wait a detachedthread, main fction must be finished
-	// with a p.._exit and not return, to avoid direct automatic exit (so detached
-	// can finish its exec). We can either detach after creation or create detach
-	// with the 2nd argument of pthread_create().
-	// -->	to set the attribute of the pthread and create it as detach right after
-	// 		is safer because there is risk for a non-detached pthread to finish its
-	//		its execution earlier than the pthread_detach() function is called.
-	// Here is the both ways to have a detach thread:
-	//		pthread_detach() way:
-	pthread_t	detached1;
+	// // Undestand the concept of "thread detached":
+	// // detachedthread isn't joinable, can't wait for its execution's end. A thread
+	// // must be cleared with join, but a detached don't, it's clearing itself.
+	// // Bcause mainthread won't wait a detachedthread, main fction must be finished
+	// // with a p.._exit and not return, to avoid direct automatic exit (so detached
+	// // can finish its exec). We can either detach after creation or create detach
+	// // with the 2nd argument of pthread_create().
+	// // -->	to set the attribute of the pthread and create it as detach right after
+	// // 		is safer because there is risk for a non-detached pthread to finish its
+	// // 		its execution earlier than the pthread_detach() function is called.
+	// // Here is the both ways to have a detach thread:
+	// 		pthread_detach() way:
+	// pthread_t	detached1;
 
-	if (pthread_create(&detached1, NULL, &print, NULL) != 0)
-		perror("Error during thread creation");
-	pthread_detach(detached1);
-	//		safer way:
-	pthread_t	detached2;
-	pthread_attr_t	attribute;
+	// if (pthread_create(&detached1, NULL, &print, NULL) != 0)
+	// 	perror("Error during thread creation");
+	// pthread_detach(detached1);
+	// //		safer way:
+	// pthread_t	detached2;
+	// pthread_attr_t	attribute;
 
-	pthread_attr_init(&attribute);
-	pthread_attr_setdetachstate(&attribute, PTHREAD_CREATE_DETACHED);
-	if (pthread_create(&detached2, &attribute, &print, NULL) != 0)
+	// pthread_attr_init(&attribute);
+	// pthread_attr_setdetachstate(&attribute, PTHREAD_CREATE_DETACHED);
+	// if (pthread_create(&detached2, &attribute, &print, NULL) != 0)
+	// 	perror("Error during thread creation");
+	// pthread_attr_destroy(&attribute);
+	// pthread_exit(0);
+
+
+
+	// a mutex has attributes too, let's look on an important one: the recursive type.
+	// This type of mutex can be locked multiple times by the same thread and then
+	// must be unlocked the same nb of times. So if a threadroutine is calling
+	// "p..lock(&mutex)" twice it won't wait infinitely but count another lock degree.
+	// The other threads waiting to lock will be enable to lock the mutex when its 
+	// degree of lock is back to zero (unlocked as many times as lock earlier).
+	// Type of mutex usually used for recursive functions.
+	// Here is a practical example of the recursive_typed mutex usage:
+	pthread_t			p_thread;
+	pthread_mutexattr_t	mutex_attributes;
+	// global var : pthread_mutex_t 	p_mutex;
+
+	pthread_mutexattr_init(&mutex_attributes);
+	pthread_mutexattr_settype(&mutex_attributes, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(&p_mutex, &mutex_attributes);
+	if (pthread_create(&p_thread, NULL, &recursive_print, "oui") != 0)
 		perror("Error during thread creation");
-	pthread_attr_destroy(&attribute);
-	pthread_exit(0);
+	else
+	{
+		if (pthread_join(p_thread, NULL) != 0)
+			perror("Error during thread join");
+		else
+			printf("%d\n", lock_times);
+	}
+	pthread_mutexattr_destroy(&mutex_attributes);
+	pthread_mutex_destroy(&p_mutex);
 }
