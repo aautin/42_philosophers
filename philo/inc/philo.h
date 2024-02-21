@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/21 12:59:33 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/21 13:43:25 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int				alloc_bag_components(t_bag *bag);
 void			free_bag(t_bag *bag);
 
 // table.c
-void			set_finished(t_table *table, char statut, unsigned short philos_nb);
+void			set_finished(t_table *table, char statut, unsigned short nb);
 int				set_table(t_table *table, unsigned short philos_nb);
 void			free_table(t_table *table, unsigned short philos_nb);
 

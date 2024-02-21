@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/21 13:14:51 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/21 13:43:47 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ static int	launch_simulation(t_table *table, char *argv[], unsigned short nb)
 		if (bag == NULL)
 			return (set_finished(table, -1, nb), finish_threads(table, i), 1);
 		if (alloc_bag_components(bag) == 1)
-	
 			return (free_bag(bag), set_finished(table, i, nb),
 				finish_threads(table, i), 1);
 		bag->table = table;
@@ -78,7 +77,6 @@ static int	launch_simulation(t_table *table, char *argv[], unsigned short nb)
 		if (pthread_create(&table->philos[i++], NULL, &simulation, bag) != 0)
 			return (printf("Error during pthread_create execution\n"), 1);
 	}
-	;
 	return (finish_threads(table, nb), 0);
 }
 
