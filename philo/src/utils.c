@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/18 19:54:32 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/23 19:50:37 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ unsigned int	ft_atou(char *str_number)
 
 void	printlog(t_mutex *printmutex, t_time start, unsigned int i, char action)
 {
-	t_time	current;
-	int		timestamp;
+	t_time			current;
+	unsigned int	timestamp;
 
 	gettimeofday(&current, NULL);
 	timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
@@ -45,17 +45,17 @@ void	printlog(t_mutex *printmutex, t_time start, unsigned int i, char action)
 	pthread_mutex_lock(printmutex);
 	if (action == FORK)
 	{
-		printf("%d %d %s", timestamp, i, "has taken a fork\n");
-		printf("%d %d %s", timestamp, i, "has taken a fork\n");
+		printf("%u %d %s", timestamp, i, "has taken a fork\n");
+		printf("%u %d %s", timestamp, i, "has taken a fork\n");
 	}
 	else if (action == EATING)
-		printf("%d %d %s", timestamp, i, "is eating\n");
+		printf("%u %d %s", timestamp, i, "is eating\n");
 	else if (action == SLEEPING)
-		printf("%d %d %s", timestamp, i, "is sleeping\n");
+		printf("%u %d %s", timestamp, i, "is sleeping\n");
 	else if (action == THINKING)
-		printf("%d %d %s", timestamp, i, "is thinking\n");
+		printf("%u %d %s", timestamp, i, "is thinking\n");
 	else if (action == DIED)
-		printf("%d %d %s", timestamp, i, "died\n");
+		printf("%u %d %s", timestamp, i, "died\n");
 	pthread_mutex_unlock(printmutex);
 }
 
