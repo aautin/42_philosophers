@@ -2,7 +2,8 @@ NAME			:=	philo_bonus
 
 INCPATH			:=	-I inc
 
-FILES			:=	main.c
+FILES			:=	utils.c		\
+					main.c
 SRCPATH			:=	src
 SRC				:=	$(addprefix $(SRCPATH)/,$(FILES))
 

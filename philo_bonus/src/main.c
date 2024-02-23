@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/14 03:37:46 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/23 20:40:21 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	main(int argc, char *argv[])
 {
-	printf("%d\n", argc);
-	(void) argv;	
+	(void) argc;
+	(void) argv;
 	return (0);
 }
