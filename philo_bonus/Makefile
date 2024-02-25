@@ -2,7 +2,9 @@ NAME			:=	philo_bonus
 
 INCPATH			:=	-I inc
 
-FILES			:=	utils.c		\
+FILES			:=	child.c		\
+					time.c		\
+					utils.c		\
 					main.c
 SRCPATH			:=	src
 SRC				:=	$(addprefix $(SRCPATH)/,$(FILES))
@@ -17,7 +19,7 @@ GREEN			:=	"\033[0;32m"
 
 CC				:=	cc
 RM				:=	rm -f
-CFLG			:=	-Wall -Werror -Wextra -g3
+CFLG			:=	-Wall -Werror -Wextra -g3 
 
 all				:	$(NAME)
 
