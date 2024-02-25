@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/25 12:43:33 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/25 14:06:39 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	are_argvs_correct(int argc, char *argv[])
 	return (1);
 }
 
-static int	fork_philos(int argc, char *argv[], pid_t *pid, unsigned int nb)
+static int	fork_philos(char *argv[], pid_t *pid, sem_t *forks, unsigned int nb)
 {
 	unsigned int	i;
 
@@ -50,21 +50,25 @@ static int	fork_philos(int argc, char *argv[], pid_t *pid, unsigned int nb)
 		if (pid[i] == 0)
 		{
 			free(pid);
-			child_process(argc, argv);
+			child_process(argv, forks);
 		}
 		else if (pid[i] == -1)
-			return (kill_childs(pid, i), free(pid), printf("Fork issue\n"), 1);
+		{
+			kill_childs(pid, i);
+			return (free(pid), sem_unlink(SEM_FORK), printf("Fork issue\n"), 1);
+		}
 		i++;
 	}
 	while (waitpid(-1, NULL, 0) > 0)
 		;
-	return (free(pid), 0);
+	return (sem_close(forks), sem_unlink(SEM_FORK), free(pid), 0);
 }
 
 int	main(int argc, char *argv[])
 {
 	unsigned int	philos_nb;
 	pid_t			*pid;
+	sem_t			*forks;
 
 	if (are_argvs_correct(argc, argv) == 0)
 		return (1);
@@ -72,5 +76,8 @@ int	main(int argc, char *argv[])
 	pid = (int *)malloc(philos_nb * sizeof(int));
 	if (pid == NULL)
 		return (printf("Malloc issue\n"), 1);
-	return (fork_philos(argc, argv, pid, philos_nb));
+	forks = sem_open(SEM_FORK, O_CREAT | O_EXCL, 666, philos_nb);
+	if (forks == NULL)
+		return (free(pid), printf("Sem_open issue\n"), 1);
+	return (fork_philos(argv, pid, forks, philos_nb));
 }
