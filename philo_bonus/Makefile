@@ -2,7 +2,9 @@ NAME			:=	philo_bonus
 
 INCPATH			:=	-I inc
 
-FILES			:=	child.c		\
+FILES			:=	checker.c	\
+					child.c		\
+					simulater.c	\
 					time.c		\
 					utils.c		\
 					main.c

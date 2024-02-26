@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/26 12:13:23 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/26 14:48:39 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ static int	fork_philos(char *argv[], pid_t *pid, sem_t *forks, unsigned int nb)
 		if (pid[i] == 0)
 		{
 			free(pid);
-			child_process(argv, forks);
+			child_process(argv, forks, ft_utoa(i));
+			sem_close(forks);
 		}
 		else if (pid[i] == -1)
 		{

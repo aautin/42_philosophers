@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:38:30 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/23 19:49:48 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/26 14:48:58 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,30 @@ unsigned int	ft_atou(char *str_number)
 	while ('0' <= str_number[i] && str_number[i] <= '9')
 		number = (number * 10) + str_number[i++] - '0';
 	return (number * sign);
+}
+
+char	*ft_utoa(unsigned int number)
+{
+	char			*str_number;
+	unsigned int	temp;
+	int				size;
+
+	temp = number;
+	size = 1;
+	while (temp / 10)
+	{
+		size++;
+		temp = temp / 10;
+	}
+	str_number = (char *)malloc((size + 1) * sizeof(char));
+	str_number[size--] = '\0';
+	while (size >= 0)
+	{
+		str_number[size] = (number % 10) + 48;
+		number = number / 10;
+		size--;
+	}
+	return (str_number);
 }
 
 void	printlog(sem_t *time, t_time start, unsigned int i, char action)

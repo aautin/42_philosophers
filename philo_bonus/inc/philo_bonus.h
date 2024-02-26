@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/26 12:14:32 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/26 14:46:49 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,22 +53,29 @@ typedef struct s_sems
 
 typedef struct s_bag
 {
-	sem_t			*forks;
-
 	int				meals_left;
-	t_times			time;
 	t_sems			sem;
+	t_times			*time;
 }	t_bag;
 
-// utils.c
-unsigned int	ft_atou(char *str_number);
-void			printlog(sem_t *time, t_time start, unsigned int i, char act);
+// child.c
+int				launch_simulation(t_times *time, sem_t *forks, sem_t *semtime,
+					int meal);
+void			child_process(char *argv[], sem_t *forks, char *name);
+void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
+
+// checker.c
+// nothing for now...
+
+// simulater.c
+void			*simulation(void *arg);
 
 // time.c
 void			set_timers(t_times *timers, t_time start, char **argv);
 
-// child.c
-void			child_process(char *argv[], sem_t *fork);
-void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
+// utils.c
+unsigned int	ft_atou(char *str_number);
+char			*ft_utoa(unsigned int number);
+void			printlog(sem_t *time, t_time start, unsigned int i, char act);
 
 #endif
