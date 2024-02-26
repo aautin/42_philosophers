@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/25 14:06:39 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/26 12:13:23 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,16 @@ static int	fork_philos(char *argv[], pid_t *pid, sem_t *forks, unsigned int nb)
 		else if (pid[i] == -1)
 		{
 			kill_childs(pid, i);
-			return (free(pid), sem_unlink(SEM_FORK), printf("Fork issue\n"), 1);
+			return (free(pid), printf("Fork() issue\n"), 1);
 		}
 		i++;
 	}
+	nb *= 2;
+	while (nb--)
+		sem_post(forks);
 	while (waitpid(-1, NULL, 0) > 0)
 		;
-	return (sem_close(forks), sem_unlink(SEM_FORK), free(pid), 0);
+	return (sem_close(forks), free(pid), 0);
 }
 
 int	main(int argc, char *argv[])
@@ -75,9 +78,9 @@ int	main(int argc, char *argv[])
 	philos_nb = ft_atou(argv[1]);
 	pid = (int *)malloc(philos_nb * sizeof(int));
 	if (pid == NULL)
-		return (printf("Malloc issue\n"), 1);
-	forks = sem_open(SEM_FORK, O_CREAT | O_EXCL, 666, philos_nb);
+		return (printf("Malloc() issue\n"), 1);
+	forks = sem_open(SEM_FORK, O_CREAT | O_EXCL, 666, 0);
 	if (forks == NULL)
-		return (free(pid), printf("Sem_open issue\n"), 1);
-	return (fork_philos(argv, pid, forks, philos_nb));
+		return (free(pid), printf("Sem_open() issue\n"), 1);
+	return (fork_philos(argv, pid, forks, philos_nb), sem_unlink(SEM_FORK));
 }

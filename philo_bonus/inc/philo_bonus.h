@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/25 14:05:36 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/26 12:14:32 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,22 +43,21 @@ typedef struct s_times
 	unsigned int	to_sleep;
 	t_time			start;
 	t_time			lastmeal;
-	sem_t			*sem_times;
 }	t_times;
 
 typedef struct s_sems
 {
-	sem_t	*fork;
-	sem_t	*time;
+	sem_t			*fork;	// shared to each child process
+	sem_t			*time;	// shared to both threads in child process
 }	t_sems;
 
 typedef struct s_bag
 {
 	sem_t			*forks;
 
-	unsigned short	*i;
 	int				meals_left;
-	t_times		*time;
+	t_times			time;
+	t_sems			sem;
 }	t_bag;
 
 // utils.c
