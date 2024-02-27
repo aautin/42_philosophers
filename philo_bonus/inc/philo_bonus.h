@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/27 13:18:36 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/27 16:23:21 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,23 +43,25 @@ typedef struct s_times
 	unsigned int	to_sleep;
 	t_time			start;
 	t_time			lastmeal;
+	unsigned int	i;
 }	t_times;
 
 typedef struct s_sems
 {
-	sem_t			*fork;	// shared to each child process
+	sem_t			*forks;	// shared to each child process
 	sem_t			*time;	// shared to both threads in child process
 }	t_sems;
 
 typedef struct s_bag
 {
 	int				meals_left;
-	t_sems			sem;
+	t_sems			*sem;
 	t_times			*time;
 }	t_bag;
 
 // child.c
-void			child_process(char *argv[], sem_t *forks, char *name);
+void			child_process(char *argv[], sem_t *forks, char *name,
+					unsigned int index);
 void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
 
 // checker.c
@@ -69,7 +71,7 @@ void			checker(t_bag *bag);
 void			*simulation(void *arg);
 
 // time.c
-void			set_timers(t_times *timers, t_time start, char **argv);
+void			set_timers(t_times *timers, char **argv);
 char			is_time_to_die(t_times *time, sem_t *sem_time);
 
 // utils.c

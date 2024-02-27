@@ -6,16 +6,14 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 15:12:41 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/27 12:10:57 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/27 16:23:11 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	set_timers(t_times *timers, t_time start, char **argv)
+void	set_timers(t_times *timers, char **argv)
 {
-	timers->start.tv_sec = start.tv_sec;
-	timers->start.tv_usec = start.tv_usec;
 	timers->lastmeal.tv_sec = timers->start.tv_sec;
 	timers->lastmeal.tv_usec = timers->start.tv_usec;
 	timers->to_die = ft_atou(argv[2]);

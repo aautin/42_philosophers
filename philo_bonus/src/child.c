@@ -6,58 +6,60 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:51:19 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/27 13:20:20 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/27 16:24:12 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static int	launch_philo(t_times *time, sem_t *forks, sem_t *semtime, int meal)
+static int	launch_philo(t_times *time, t_sems *sem, char **argv)
 {
-	t_bag		bag;
-	pthread_t	simulater;
+	t_bag			bag;
+	pthread_t		simulater;
 
-	bag.sem.fork = forks;
-	bag.sem.time = semtime;
 	bag.time = time;
-	bag.meals_left = meal;
+	bag.sem = sem;
+	if (argv[6])
+		bag.meals_left = ft_atou(argv[6]);
+	else
+		bag.meals_left = -1;
+	sem_wait(sem->forks);
+	gettimeofday(&time->start, NULL);
+	set_timers(time, argv);
 	if (pthread_create(&simulater, NULL, &simulation, &bag) == -1)
 	{
-		close_sems(forks, semtime, NULL);
+		close_sems(bag.sem->forks, bag.sem->time, NULL);
 		return (printf("Pthread_create() issue\n"), EXIT_FAILURE);
 	}
 	checker(&bag);
 	if (pthread_join(simulater, NULL) == -1)
 	{
-		close_sems(forks, semtime, NULL);
+		close_sems(bag.sem->forks, bag.sem->time, NULL);
 		return (printf("Pthread_join() issue\n"), EXIT_FAILURE);
 	}
-	return (close_sems(forks, semtime, NULL), EXIT_SUCCESS);
+	return (close_sems(bag.sem->forks, bag.sem->time, NULL), EXIT_SUCCESS);
 }
 
-void	child_process(char *argv[], sem_t *sem_forks, char *name)
+void	child_process(char *argv[], sem_t *forks, char *name, unsigned int i)
 {
 	t_times	time;
-	t_time	start;
-	sem_t	*sem_time;
+	t_sems	sem;
 	int		value;
 
-	sem_wait(sem_forks);
-	gettimeofday(&start, NULL);
-	sem_time = sem_open(name, O_CREAT | O_EXCL, 666, 1);
-	if (sem_time == NULL)
+	time.i = i;
+	sem.time = sem_open(name, O_CREAT | O_EXCL, 666, 1);
+	if (sem.time == NULL)
 	{
-		sem_close(sem_forks);
+		sem_close(forks);
 		free(name);
 		printf("Sem_open() issue\n");
 		exit(EXIT_FAILURE);
 	}
-	set_timers(&time, start, argv);
+	sem.forks = forks;
 	if (argv[6] != NULL)
-		value = launch_philo(&time, sem_forks, sem_time, ft_atou(argv[6]));
+		value = launch_philo(&time, &sem, argv);
 	else
-		value = launch_philo(&time, sem_forks, sem_time, -1);
-	write(1, &value, 1);
+		value = launch_philo(&time, &sem, argv);
 	sem_unlink(name);
 	free(name);
 	exit(value);
