@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/26 14:46:49 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/27 13:18:36 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,23 +59,23 @@ typedef struct s_bag
 }	t_bag;
 
 // child.c
-int				launch_simulation(t_times *time, sem_t *forks, sem_t *semtime,
-					int meal);
 void			child_process(char *argv[], sem_t *forks, char *name);
 void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
 
 // checker.c
-// nothing for now...
+void			checker(t_bag *bag);
 
 // simulater.c
 void			*simulation(void *arg);
 
 // time.c
 void			set_timers(t_times *timers, t_time start, char **argv);
+char			is_time_to_die(t_times *time, sem_t *sem_time);
 
 // utils.c
 unsigned int	ft_atou(char *str_number);
 char			*ft_utoa(unsigned int number);
 void			printlog(sem_t *time, t_time start, unsigned int i, char act);
+void			close_sems(sem_t *sem1, sem_t *sem2, sem_t *sem3);
 
 #endif

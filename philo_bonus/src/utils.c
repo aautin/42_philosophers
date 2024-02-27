@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:38:30 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/26 14:48:58 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/27 13:18:20 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,14 @@ void	printlog(sem_t *time, t_time start, unsigned int i, char action)
 	else if (action == DIED)
 		printf("%u %d %s", timestamp, i, "died\n");
 	sem_post(time);
+}
+
+void	close_sems(sem_t *sem1, sem_t *sem2, sem_t *sem3)
+{
+	if (sem1)
+		sem_close(sem1);
+	if (sem2)
+		sem_close(sem2);
+	if (sem3)
+		sem_close(sem3);
 }

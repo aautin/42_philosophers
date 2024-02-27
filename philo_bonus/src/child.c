@@ -6,13 +6,13 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:51:19 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/26 15:00:47 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/27 13:20:20 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int	launch_simulation(t_times *time, sem_t *forks, sem_t *semtime, int meal)
+static int	launch_philo(t_times *time, sem_t *forks, sem_t *semtime, int meal)
 {
 	t_bag		bag;
 	pthread_t	simulater;
@@ -23,17 +23,16 @@ int	launch_simulation(t_times *time, sem_t *forks, sem_t *semtime, int meal)
 	bag.meals_left = meal;
 	if (pthread_create(&simulater, NULL, &simulation, &bag) == -1)
 	{
-		printf("Pthread_create() issue\n");
-		return (EXIT_FAILURE);
+		close_sems(forks, semtime, NULL);
+		return (printf("Pthread_create() issue\n"), EXIT_FAILURE);
 	}
-	sem_close(semtime);	// better to close it at the end of checker() part
-	// checker(time, forks, semtime, meal);
+	checker(&bag);
 	if (pthread_join(simulater, NULL) == -1)
 	{
-		printf("Pthread_join() issue\n");
-		return (EXIT_FAILURE);
+		close_sems(forks, semtime, NULL);
+		return (printf("Pthread_join() issue\n"), EXIT_FAILURE);
 	}
-	return (EXIT_SUCCESS);
+	return (close_sems(forks, semtime, NULL), EXIT_SUCCESS);
 }
 
 void	child_process(char *argv[], sem_t *sem_forks, char *name)
@@ -41,7 +40,7 @@ void	child_process(char *argv[], sem_t *sem_forks, char *name)
 	t_times	time;
 	t_time	start;
 	sem_t	*sem_time;
-	int		statut;
+	int		value;
 
 	sem_wait(sem_forks);
 	gettimeofday(&start, NULL);
@@ -55,13 +54,13 @@ void	child_process(char *argv[], sem_t *sem_forks, char *name)
 	}
 	set_timers(&time, start, argv);
 	if (argv[6] != NULL)
-		statut = launch_simulation(&time, sem_forks,
-				sem_time, ft_atou(argv[6]));
+		value = launch_philo(&time, sem_forks, sem_time, ft_atou(argv[6]));
 	else
-		statut = launch_simulation(&time, sem_forks, sem_time, -1);
+		value = launch_philo(&time, sem_forks, sem_time, -1);
+	write(1, &value, 1);
 	sem_unlink(name);
 	free(name);
-	exit(statut);
+	exit(value);
 }
 
 void	kill_childs(pid_t *pid, unsigned int nb_to_kill)

@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/26 14:48:39 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/27 13:25:01 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,23 @@ int	main(int argc, char *argv[])
 	pid_t			*pid;
 	sem_t			*forks;
 
-	if (are_argvs_correct(argc, argv) == 0)
+	if (argc == 6 || argc == 5)
+	{
+		if (are_argvs_correct(argc, argv) == 0)
+			return (1);
+		philos_nb = ft_atou(argv[1]);
+		pid = (int *)malloc(philos_nb * sizeof(int));
+		if (pid == NULL)
+			return (printf("Malloc() issue\n"), 1);
+		forks = sem_open(SEM_FORK, O_CREAT | O_EXCL, 666, 0);
+		if (forks == NULL)
+			return (free(pid), printf("Sem_open() issue\n"), 1);
+		return (fork_philos(argv, pid, forks, philos_nb), sem_unlink(SEM_FORK));
+	}
+	else
+	{
+		printf("Wrong arguments\nMust be: ");
+		printf("nb_of_philos time_to_die _eat _sleep [meals_philo_must_eat]\n");
 		return (1);
-	philos_nb = ft_atou(argv[1]);
-	pid = (int *)malloc(philos_nb * sizeof(int));
-	if (pid == NULL)
-		return (printf("Malloc() issue\n"), 1);
-	forks = sem_open(SEM_FORK, O_CREAT | O_EXCL, 666, 0);
-	if (forks == NULL)
-		return (free(pid), printf("Sem_open() issue\n"), 1);
-	return (fork_philos(argv, pid, forks, philos_nb), sem_unlink(SEM_FORK));
+	}
 }
