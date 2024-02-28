@@ -6,21 +6,30 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:44:07 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/27 16:27:23 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/28 18:40:02 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+// static void	eat(t_bag *bag, sem_t *forks)
+// {
+// 	sem_wait(forks);
+// 	printlog(bag->sem->bag, bag->time->start, bag->time->i, FORK);
+// 	sem_wait(forks);
+// 	printlog(bag->sem->bag, bag->time->start, bag->time->i, FORK);
+	
+// }
 
 void	*simulation(void *arg)
 {
 	t_bag	*bag;
 
 	bag = (t_bag *) arg;
-	printlog(bag->sem->time, bag->time->start, bag->time->i, DIED);
-	while (is_time_to_die(bag->time, bag->sem->time) == 0)
+	while (is_time_to_stop(bag, bag->sem->bag) == 0)
 	{
-		usleep(2000);
+		// eat();
+		// nap();
 	}
 	pthread_exit(NULL);
 }
