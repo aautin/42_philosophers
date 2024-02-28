@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/27 16:23:21 by aautin           ###   ########.fr       */
+/*   Updated: 2024/02/28 17:44:35 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,19 @@ typedef struct s_times
 typedef struct s_sems
 {
 	sem_t			*forks;	// shared to each child process
-	sem_t			*time;	// shared to both threads in child process
+	sem_t			*bag;	// shared to both threads in child process
 }	t_sems;
 
 typedef struct s_bag
 {
 	int				meals_left;
+	char			stop;
 	t_sems			*sem;
 	t_times			*time;
 }	t_bag;
 
 // child.c
-void			child_process(char *argv[], sem_t *forks, char *name,
+int				child_process(char *argv[], sem_t *forks, char *name,
 					unsigned int index);
 void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
 
@@ -73,11 +74,15 @@ void			*simulation(void *arg);
 // time.c
 void			set_timers(t_times *timers, char **argv);
 char			is_time_to_die(t_times *time, sem_t *sem_time);
+char			is_time_to_stop(t_bag *bag, sem_t *sem_bag);
 
 // utils.c
 unsigned int	ft_atou(char *str_number);
 char			*ft_utoa(unsigned int number);
 void			printlog(sem_t *time, t_time start, unsigned int i, char act);
 void			close_sems(sem_t *sem1, sem_t *sem2, sem_t *sem3);
+
+// parsing.c
+int				are_argvs_correct(int argc, char *argv[]);
 
 #endif

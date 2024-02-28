@@ -4,6 +4,7 @@ INCPATH			:=	-I inc
 
 FILES			:=	checker.c	\
 					child.c		\
+					parsing.c	\
 					simulater.c	\
 					time.c		\
 					utils.c		\
