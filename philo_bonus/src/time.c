@@ -54,8 +54,10 @@ unsigned int	get_usleep_time(t_times *time, unsigned int action, sem_t *sem)
 
 	sem_wait(sem);
 	gettimeofday(&current, NULL);
-	time_since_lastmeal = (current.tv_sec * 1000) - (time->lastmeal.tv_sec * 1000);
-	time_since_lastmeal += (current.tv_usec / 1000) - (time->lastmeal.tv_usec / 1000);
+	time_since_lastmeal = (current.tv_sec * 1000)
+		- (time->lastmeal.tv_sec * 1000);
+	time_since_lastmeal += (current.tv_usec / 1000)
+		- (time->lastmeal.tv_usec / 1000);
 	time_until_die = time->to_die - time_since_lastmeal;
 	sem_post(sem);
 	if (time_until_die > action)

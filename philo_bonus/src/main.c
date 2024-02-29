@@ -14,18 +14,12 @@
 
 static void	provide_forks(unsigned int forks_to_provide, sem_t *forks)
 {
-	unsigned int	i = 0;
 	while (forks_to_provide--)
 	{
 		sem_post(forks);
 		if ((forks_to_provide % 2) == 1)
-		{
 			sem_post(forks);
-			i++;
-		}	
-		i++;
 	}
-	printf("%d forks provided\n", i);
 }
 
 static int	fork_philos(char *argv[], pid_t *pid, sem_t *forks, unsigned int nb)

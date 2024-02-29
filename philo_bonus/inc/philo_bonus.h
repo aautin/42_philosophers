@@ -48,8 +48,8 @@ typedef struct s_times
 
 typedef struct s_sems
 {
-	sem_t			*forks;	// shared to each child process
-	sem_t			*bag;	// shared to both threads in child process
+	sem_t			*forks;
+	sem_t			*bag;
 }	t_sems;
 
 typedef struct s_bag
