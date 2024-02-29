@@ -24,39 +24,39 @@ static int	launch_philo(t_times *time, t_sems *sem, char **argv)
 	else
 		bag.meals_left = -1;
 	bag.stop = 0;
+	sem_post(sem->forks);
 	sem_wait(sem->forks);
-	gettimeofday(&time->start, NULL);
+	if (gettimeofday(&time->start, NULL) == -1)
+		printf("wo\n");
 	set_timers(time, argv);
 	if (pthread_create(&simulater, NULL, &simulation, &bag) == -1)
-	{
-		close_sems(bag.sem->forks, bag.sem->bag, NULL);
-		return (printf("Pthread_create() issue\n"), EXIT_FAILURE);
-	}
+		return (close_sems(sem->forks, sem->bag, sem->stop),
+			printf("Pthread_create() issue\n"), EXIT_FAILURE);
 	checker(&bag);
 	if (pthread_join(simulater, NULL) == -1)
-	{
-		close_sems(bag.sem->forks, bag.sem->bag, NULL);
-		return (printf("Pthread_join() issue\n"), EXIT_FAILURE);
-	}
-	return (close_sems(bag.sem->forks, bag.sem->bag, NULL), EXIT_SUCCESS);
+		return (close_sems(sem->forks, sem->bag, sem->stop),
+			printf("Pthread_join() issue\n"), EXIT_FAILURE);
+	close_sems(bag.sem->forks, bag.sem->bag, bag.sem->stop);
+	return (EXIT_SUCCESS);
 }
 
-int	child_process(char *argv[], sem_t *forks, char *name, unsigned int i)
+int	child_process(char *argv[], sem_t *forks, sem_t *stop, char *name)
 {
 	t_times	time;
 	t_sems	sem;
 	int		value;
 
-	time.i = i;
+	time.i = ft_atou(name);
 	sem.bag = sem_open(name, O_CREAT | O_EXCL, 666, 1);
 	if (sem.bag == NULL)
 	{
-		sem_close(forks);
+		close_sems(forks, stop, NULL);
 		free(name);
 		printf("Sem_open() issue\n");
 		exit(EXIT_FAILURE);
 	}
 	sem.forks = forks;
+	sem.stop = stop;
 	if (argv[6] != NULL)
 		value = launch_philo(&time, &sem, argv);
 	else

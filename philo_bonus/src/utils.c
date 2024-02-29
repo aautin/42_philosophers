@@ -81,6 +81,16 @@ void	printlog(sem_t *time, t_time start, unsigned int i, char action)
 	sem_post(time);
 }
 
+void	unlink_sems(char *sem1, char *sem2, char *sem3)
+{
+	if (sem1)
+		sem_unlink(sem1);
+	if (sem2)
+		sem_unlink(sem2);
+	if (sem3)
+		sem_unlink(sem3);
+}
+
 void	close_sems(sem_t *sem1, sem_t *sem2, sem_t *sem3)
 {
 	if (sem1)

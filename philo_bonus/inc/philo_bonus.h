@@ -26,6 +26,7 @@
 # include <unistd.h>
 
 # define SEM_FORK "fork_sem"
+# define SEM_STOP "stop_sem"
 
 # define FORK 0
 # define EATING 1
@@ -50,6 +51,7 @@ typedef struct s_sems
 {
 	sem_t			*forks;
 	sem_t			*bag;
+	sem_t			*stop;
 }	t_sems;
 
 typedef struct s_bag
@@ -61,8 +63,7 @@ typedef struct s_bag
 }	t_bag;
 
 // child.c
-int				child_process(char *argv[], sem_t *forks, char *name,
-					unsigned int index);
+int				child_process(char *av[], sem_t *fork, sem_t *stop, char *name);
 void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
 
 // checker.c
@@ -82,6 +83,7 @@ unsigned int	ft_atou(char *str_number);
 char			*ft_utoa(unsigned int number);
 void			printlog(sem_t *time, t_time start, unsigned int i, char act);
 void			close_sems(sem_t *sem1, sem_t *sem2, sem_t *sem3);
+void			unlink_sems(char *sem1, char *sem2, char *sem3);
 
 // parsing.c
 int				are_argvs_correct(int argc, char *argv[]);
