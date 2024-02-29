@@ -61,9 +61,7 @@ int	child_process(char *argv[], sem_t *forks, char *name, unsigned int i)
 		value = launch_philo(&time, &sem, argv);
 	else
 		value = launch_philo(&time, &sem, argv);
-	sem_unlink(name);
-	free(name);
-	return (value);
+	return (sem_unlink(name), free(name), value);
 }
 
 void	kill_childs(pid_t *pid, unsigned int nb_to_kill)

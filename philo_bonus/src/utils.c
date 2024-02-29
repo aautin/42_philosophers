@@ -16,14 +16,12 @@ unsigned int	ft_atou(char *str_number)
 {
 	unsigned int	number;
 	unsigned int	i;
-	char			sign;
 
 	if (str_number == NULL)
 		return (0);
 	i = 0;
 	while ((9 <= str_number[i] && str_number[i] <= 13) || str_number[i] == ' ')
 		i++;
-	sign = 1;
 	if (str_number[i] == '+')
 		i++;
 	while (str_number[i] == '0')
@@ -31,7 +29,7 @@ unsigned int	ft_atou(char *str_number)
 	number = 0;
 	while ('0' <= str_number[i] && str_number[i] <= '9')
 		number = (number * 10) + str_number[i++] - '0';
-	return (number * sign);
+	return (number);
 }
 
 char	*ft_utoa(unsigned int number)

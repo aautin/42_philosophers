@@ -25,24 +25,18 @@ static void	provide_forks(unsigned int forks_to_provide, sem_t *forks)
 static int	fork_philos(char *argv[], pid_t *pid, sem_t *forks, unsigned int nb)
 {
 	unsigned int	i;
-	int				exit_status;
 
-	i = 0;
-	while (i < nb)
+	i = -1;
+	while (++i < nb)
 	{
 		pid[i] = fork();
 		if (pid[i] == 0)
 		{
 			free(pid);
-			exit_status = child_process(argv, forks, ft_utoa(i), i);
-			exit(exit_status);
+			exit(child_process(argv, forks, ft_utoa(i), i));
 		}
 		else if (pid[i] == -1)
-		{
-			kill_childs(pid, i);
-			return (free(pid), printf("Fork() issue\n"), 1);
-		}
-		i++;
+			return (kill_childs(pid, i), free(pid), printf("Fork() issue\n"), 1);
 	}
 	provide_forks(nb, forks);
 	while (waitpid(-1, NULL, 0) > 0)
@@ -71,8 +65,7 @@ int	main(int argc, char *argv[])
 	}
 	else
 	{
-		printf("Wrong arguments\nMust be: ");
-		printf("nb_of_philos time_to_die _eat _sleep [meals_philo_must_eat]\n");
-		return (1);
+		printf("Wrong arguments\nMust be: nb_of_philos time_to_die");
+		return (printf(" _eat _sleep [meals_philo_must_eat]\n"), 1);
 	}
 }
