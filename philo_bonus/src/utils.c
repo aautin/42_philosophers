@@ -60,13 +60,13 @@ char	*ft_utoa(unsigned int number)
 
 void	printlog(sem_t *time, t_time start, unsigned int i, char action)
 {
-	t_time				current;
-	unsigned int		timestamp;
+	t_time			current;
+	unsigned int	timestamp;
 
 	gettimeofday(&current, NULL);
+	sem_wait(time);
 	timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
 	timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
-	sem_wait(time);
 	if (action == FORK)
 	{
 		printf("%u %d %s", timestamp, i, "has taken a fork\n");

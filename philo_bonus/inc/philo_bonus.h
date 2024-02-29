@@ -75,6 +75,7 @@ void			*simulation(void *arg);
 void			set_timers(t_times *timers, char **argv);
 char			is_time_to_die(t_times *time, sem_t *sem_time);
 char			is_time_to_stop(t_bag *bag, sem_t *sem_bag);
+unsigned int	get_usleep_time(t_times *time, unsigned int action, sem_t *sem);
 
 // utils.c
 unsigned int	ft_atou(char *str_number);

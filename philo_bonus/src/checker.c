@@ -15,9 +15,9 @@
 void	checker(t_bag *bag)
 {
 	while (is_time_to_die(bag->time, bag->sem->bag) == 0)
-		usleep(2);
+		usleep(20);
+	printlog(bag->sem->bag, bag->time->start, bag->time->i, DIED);
 	sem_wait(bag->sem->bag);
 	bag->stop = 1;
 	sem_post(bag->sem->bag);
-	printlog(bag->sem->bag, bag->time->start, bag->time->i, DIED);
 }

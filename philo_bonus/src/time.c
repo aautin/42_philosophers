@@ -27,8 +27,8 @@ char	is_time_to_die(t_times *time, sem_t *bag)
 	unsigned int	time_spent;
 	char			must_die;
 
-	gettimeofday(&current, NULL);
 	sem_wait(bag);
+	gettimeofday(&current, NULL);
 	time_spent = (current.tv_sec * 1000) - (time->lastmeal.tv_sec * 1000);
 	time_spent += (current.tv_usec / 1000) - (time->lastmeal.tv_usec / 1000);
 	must_die = (time_spent >= time->to_die);
@@ -44,4 +44,22 @@ char	is_time_to_stop(t_bag *bag, sem_t *sem_bag)
 	die_flag = bag->stop;
 	sem_post(sem_bag);
 	return (die_flag);
+}
+
+unsigned int	get_usleep_time(t_times *time, unsigned int action, sem_t *sem)
+{
+	t_time			current;
+	unsigned int	time_since_lastmeal;
+	unsigned int	time_until_die;
+
+	sem_wait(sem);
+	gettimeofday(&current, NULL);
+	time_since_lastmeal = (current.tv_sec * 1000) - (time->lastmeal.tv_sec * 1000);
+	time_since_lastmeal += (current.tv_usec / 1000) - (time->lastmeal.tv_usec / 1000);
+	time_until_die = time->to_die - time_since_lastmeal;
+	sem_post(sem);
+	if (time_until_die > action)
+		return (action * 1000);
+	else
+		return (time_until_die * 1000);
 }

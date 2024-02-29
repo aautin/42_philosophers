@@ -36,9 +36,5 @@ int	are_argvs_correct(int argc, char *argv[])
 		if (philos_nb == 0 || to_die == 0 || to_eat == 0 || to_sleep == 0)
 			return (printf("Each argument must be strictely positive nbr\n"), 0);
 	}
-	printf("philos_nb = %d\n", philos_nb);
-	printf("to_die = %d\n", to_die);
-	printf("to_sleep = %d\n", to_sleep);
-	printf("to_eat = %d\n", to_eat);
 	return (1);
 }
