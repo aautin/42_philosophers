@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/28 17:44:35 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/01 17:38:53 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-# define SEM_FORK "fork_sem"
-# define SEM_STOP "stop_sem"
+# define SEM_FORK "fork"
+# define SEM_STOP "stop"
 
 # define FORK 0
 # define EATING 1
@@ -37,35 +37,63 @@
 typedef struct timeval	t_time;
 typedef pthread_t		t_thread;
 
+typedef struct s_parent
+{
+	// mallocated part
+	pid_t	*pid;
+	sem_t	*forks;
+	char	**stop_name;
+	sem_t	**stop_sem;
+
+	// stacked part
+	unsigned int	philos_nb;
+}	t_parent;
+
+typedef struct s_sems
+{
+	// mallocated part
+	sem_t	*forks;
+	sem_t	*stop;
+	sem_t	*child;
+}	t_sems;
+
 typedef struct s_times
 {
+	// stacked part
 	unsigned int	to_die;
 	unsigned int	to_eat;
 	unsigned int	to_sleep;
 	t_time			start;
 	t_time			lastmeal;
-	unsigned int	i;
 }	t_times;
 
-typedef struct s_sems
+typedef struct s_number
 {
-	sem_t			*forks;
-	sem_t			*bag;
-	sem_t			*stop;
-}	t_sems;
+	// stacked part
+	unsigned int	i;
+	unsigned int	philos;
+	int				meals;
+	char			stop;
+}	t_number;
 
 typedef struct s_bag
 {
-	int				meals_left;
-	unsigned int	philos_nb;
-	char			stop;
-	t_sems			*sem;
-	t_times			*time;
+	// mallocated part
+	t_sems		sem;
+
+	// stacked part
+	t_number	nb;
+	t_times		time;
 }	t_bag;
 
 // child.c
 int				child_process(char *av[], sem_t *fork, sem_t *stop, char *name);
 void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
+
+// parent.c
+void			free_parent(t_parent *parent);
+int				init_parent_struct(t_parent *parent, char **argv);
+void			provide_forks(unsigned int forks_to_provide, sem_t *forks);
 
 // checkers.c
 void			thread_checker(t_bag *bag);
