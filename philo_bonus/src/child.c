@@ -19,8 +19,8 @@ static int	launch_philo(t_times *time, t_sems *sem, char **argv)
 
 	bag.time = time;
 	bag.sem = sem;
-	if (argv[6])
-		bag.meals_left = ft_atou(argv[6]);
+	if (argv[5])
+		bag.meals_left = ft_atou(argv[5]);
 	else
 		bag.meals_left = -1;
 	bag.stop = 0;
@@ -57,10 +57,7 @@ int	child_process(char *argv[], sem_t *forks, sem_t *stop, char *name)
 	}
 	sem.forks = forks;
 	sem.stop = stop;
-	if (argv[6] != NULL)
-		value = launch_philo(&time, &sem, argv);
-	else
-		value = launch_philo(&time, &sem, argv);
+	value = launch_philo(&time, &sem, argv);
 	return (sem_unlink(name), free(name), value);
 }
 
