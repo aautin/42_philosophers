@@ -39,8 +39,8 @@ static int	fork_philos(char *argv[], pid_t *pid, t_sems *sem, unsigned int nb)
 		i++;
 	}
 	provide_forks(nb, sem->forks);
-	while (waitpid(-1, NULL, 0) > 0)
-		;
+	parent_checker(nb, sem->stop);
+	kill_childs(pid, i);
 	return (close_sems(sem->forks, sem->stop, NULL), free(pid), 0);
 }
 

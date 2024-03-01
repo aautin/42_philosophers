@@ -57,6 +57,7 @@ typedef struct s_sems
 typedef struct s_bag
 {
 	int				meals_left;
+	unsigned int	philos_nb;
 	char			stop;
 	t_sems			*sem;
 	t_times			*time;
@@ -66,8 +67,9 @@ typedef struct s_bag
 int				child_process(char *av[], sem_t *fork, sem_t *stop, char *name);
 void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
 
-// checker.c
-void			checker(t_bag *bag);
+// checkers.c
+void			thread_checker(t_bag *bag);
+void			parent_checker(unsigned int philos_nb, sem_t *stop);
 
 // simulater.c
 void			*simulation(void *arg);

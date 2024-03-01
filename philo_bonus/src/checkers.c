@@ -12,7 +12,19 @@
 
 #include "philo_bonus.h"
 
-void	checker(t_bag *bag)
+static void	send_stop_to_parent(unsigned int times, sem_t *stop)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < times)
+	{
+		sem_post(stop);
+		i++;
+	}
+}
+
+void	thread_checker(t_bag *bag)
 {
 	while (is_time_to_die(bag->time, bag->sem->bag) == 0)
 		usleep(40);
@@ -20,4 +32,18 @@ void	checker(t_bag *bag)
 	sem_wait(bag->sem->bag);
 	bag->stop = 1;
 	sem_post(bag->sem->bag);
+	send_stop_to_parent(bag->philos_nb, bag->sem->stop);
+}
+
+void	parent_checker(unsigned int philos_nb, sem_t *stop)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < philos_nb)
+	{
+		sem_wait(stop);
+		i++;
+	}
+	printf("[!] Finish [!]\n");
 }

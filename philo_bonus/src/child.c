@@ -24,15 +24,15 @@ static int	launch_philo(t_times *time, t_sems *sem, char **argv)
 	else
 		bag.meals_left = -1;
 	bag.stop = 0;
+	bag.philos_nb = ft_atou(argv[1]);
 	sem_post(sem->forks);
 	sem_wait(sem->forks);
-	if (gettimeofday(&time->start, NULL) == -1)
-		printf("wo\n");
+	gettimeofday(&time->start, NULL);
 	set_timers(time, argv);
 	if (pthread_create(&simulater, NULL, &simulation, &bag) == -1)
 		return (close_sems(sem->forks, sem->bag, sem->stop),
 			printf("Pthread_create() issue\n"), EXIT_FAILURE);
-	checker(&bag);
+	thread_checker(&bag);
 	if (pthread_join(simulater, NULL) == -1)
 		return (close_sems(sem->forks, sem->bag, sem->stop),
 			printf("Pthread_join() issue\n"), EXIT_FAILURE);

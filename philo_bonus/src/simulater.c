@@ -57,7 +57,6 @@ void	*simulation(void *arg)
 	t_bag	*bag;
 
 	bag = (t_bag *) arg;
-	printf("must_eat:%d\n", bag->meals_left);
 	while (is_time_to_stop(bag, bag->sem->bag) == 0)
 	{
 		eat(bag, bag->sem->forks);
