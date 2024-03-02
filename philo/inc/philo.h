@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/21 13:43:25 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 13:53:14 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct s_table
 	char			*finished;
 	t_mutex			*mutexs;
 	char			*forks;
+	t_time			start;
 }	t_table;
 
 typedef struct s_bag
@@ -79,7 +80,7 @@ void			free_table(t_table *table, unsigned short philos_nb);
 void			*simulation(void *adress);
 
 // time.c
-void			set_timers(t_timers *timers, char **argv);
+void			set_timers(t_table *table, t_timers *timers, char **argv);
 int				is_time_to_die(t_bag *bag);
 unsigned int	get_time_left(t_bag *bag);
 void			kill_philo_during_action(t_bag *bag, int time, char act);		

@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/21 13:43:47 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 13:52:18 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static int	launch_simulation(t_table *table, char *argv[], unsigned short nb)
 			*bag->meals_left = -1;
 		else
 			*bag->meals_left = ft_atou(argv[5]);
-		set_timers(bag->time, argv);
+		set_timers(table, bag->time, argv);
 		if (pthread_create(&table->philos[i++], NULL, &simulation, bag) != 0)
 			return (printf("Error during pthread_create execution\n"), 1);
 	}
@@ -92,6 +92,7 @@ int	main(int argc, char *argv[])
 		philos_nb = (unsigned short) ft_atou(argv[1]);
 		if (set_table(&table, philos_nb) == 1)
 			return (1);
+		gettimeofday(&table.start, NULL);
 		launch_simulation(&table, argv, philos_nb);
 		free_table(&table, philos_nb);
 		return (0);
