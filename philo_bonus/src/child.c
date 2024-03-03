@@ -6,70 +6,61 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:51:19 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/28 17:45:42 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 17:22:24 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static int	launch_philo(t_times *time, t_sems *sem, char **argv)
+void	close_child(t_bag *bag)
 {
-	t_bag			bag;
-	pthread_t		simulater;
+	// somethings has to be sem_close, sem_unlink and free
+}
 
-	bag.time = time;
-	bag.sem = sem;
+void	send_signal(sem_t *signal, unsigned int signals_nb)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < signals_nb)
+	{
+		sem_post(signal);
+		i++
+	}
+}
+
+static int	init_child_struct(t_bag *bag, t_parent *parent, char **argv,
+	unsigned int i)
+{
+	bag->name = ft_utoa(i);
+	if (bag->name == NULL)
+		return (1);
+	bag->sem.child = sem_open(bag->name, O_CREAT | O_EXCL, 777, 1);
+	if (bag->sem.child == NULL)
+		return (free(bag->name), 1);
+	bag->sem.forks = parent->forks;
+	bag->sem.signal = parent->signal;
+	bag->time.start.tv_sec = parent->start.tv_sec;
+	bag->time.start.tv_usec = parent->start.tv_usec;
+	set_timers(&bag->time, argv);
+	bag->nb.stop = 0;
+	bag->nb.philos = parent->philos_nb;
 	if (argv[5])
-		bag.meals_left = ft_atou(argv[5]);
+		bag->nb.meals = ft_atou(argv[5]);
 	else
-		bag.meals_left = -1;
-	bag.stop = 0;
-	bag.philos_nb = ft_atou(argv[1]);
-	sem_post(sem->forks);
-	sem_wait(sem->forks);
-	gettimeofday(&time->start, NULL);
-	set_timers(time, argv);
-	if (pthread_create(&simulater, NULL, &simulation, &bag) == -1)
-		return (close_sems(sem->forks, sem->bag, sem->stop),
-			printf("Pthread_create() issue\n"), EXIT_FAILURE);
-	thread_checker(&bag);
-	if (pthread_join(simulater, NULL) == -1)
-		return (close_sems(sem->forks, sem->bag, sem->stop),
-			printf("Pthread_join() issue\n"), EXIT_FAILURE);
-	close_sems(bag.sem->forks, bag.sem->bag, bag.sem->stop);
-	return (EXIT_SUCCESS);
+		bag->nb.meals = -1;
+	return (0);
 }
 
-int	child_process(char *argv[], sem_t *forks, sem_t *stop, char *name)
+int	child_process(t_parent *parent, char **argv, unsigned int i)
 {
-	t_times	time;
-	t_sems	sem;
-	int		value;
+	t_bag	bag;
 
-	time.i = ft_atou(name);
-	sem.bag = sem_open(name, O_CREAT | O_EXCL, 666, 1);
-	if (sem.bag == NULL)
+	if (init_child_struct(&bag, parent, argv, i) == 1)
 	{
-		close_sems(forks, stop, NULL);
-		free(name);
-		printf("Sem_open() issue\n");
-		exit(EXIT_FAILURE);
+		send_signal(bag.sem.child, bag.nb.philos);
+		return (close_parent(parent), EXIT_FAILURE);
 	}
-	sem.forks = forks;
-	sem.stop = stop;
-	value = launch_philo(&time, &sem, argv);
-	return (sem_unlink(name), free(name), value);
-}
-
-void	kill_childs(pid_t *pid, unsigned int nb_to_kill)
-{
-	unsigned int	index;
-
-	index = 0;
-	while (index < nb_to_kill)
-	{
-		if (kill(pid[index], SIGTERM) == -1)
-			exit(EXIT_FAILURE);
-		index++;
-	}
+	send_signal(bag.sem.child, bag.nb.philos);
+	return (close_child(bag), close_parent(parent), EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 15:12:41 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/28 18:04:44 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 16:51:23 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	set_timers(t_times *timers, char **argv)
 	timers->to_sleep = ft_atou(argv[4]);
 }
 
-char	is_time_to_die(t_times *time, sem_t *bag)
+int	is_time_to_die(t_times *time, sem_t *bag)
 {
 	t_time			current;
 	unsigned int	time_spent;
@@ -36,7 +36,7 @@ char	is_time_to_die(t_times *time, sem_t *bag)
 	return (must_die);
 }
 
-char	is_time_to_stop(t_bag *bag, sem_t *sem_bag)
+int	is_time_to_stop(t_bag *bag, sem_t *sem_bag)
 {
 	char	die_flag;
 

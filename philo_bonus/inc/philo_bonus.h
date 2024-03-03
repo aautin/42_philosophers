@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/01 17:38:53 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 17:22:17 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-# define SEM_FORK "fork"
-# define SEM_STOP "stop"
+# define SEM_FORKS "fork"
+# define SEM_SIGNAL "signal"
+# define SEM_KILL "kill"
 
 # define FORK 0
 # define EATING 1
@@ -42,18 +43,19 @@ typedef struct s_parent
 	// mallocated part
 	pid_t	*pid;
 	sem_t	*forks;
-	char	**stop_name;
-	sem_t	**stop_sem;
+	sem_t	*signal;
+	sem_t	*kill;
 
 	// stacked part
 	unsigned int	philos_nb;
+	t_time			start;
 }	t_parent;
 
 typedef struct s_sems
 {
 	// mallocated part
 	sem_t	*forks;
-	sem_t	*stop;
+	sem_t	*signal;
 	sem_t	*child;
 }	t_sems;
 
@@ -70,7 +72,6 @@ typedef struct s_times
 typedef struct s_number
 {
 	// stacked part
-	unsigned int	i;
 	unsigned int	philos;
 	int				meals;
 	char			stop;
@@ -80,6 +81,7 @@ typedef struct s_bag
 {
 	// mallocated part
 	t_sems		sem;
+	char 		*name;
 
 	// stacked part
 	t_number	nb;
@@ -87,13 +89,14 @@ typedef struct s_bag
 }	t_bag;
 
 // child.c
-int				child_process(char *av[], sem_t *fork, sem_t *stop, char *name);
-void			kill_childs(pid_t *pid, unsigned int nb_to_kill);
+void			close_child(t_bag *bag);
+void			send_signal(sem_t *signal, unsigned int signals_nb);
+int				child_process(t_parent *parent, char **argv, unsigned int i);
 
 // parent.c
-void			free_parent(t_parent *parent);
-int				init_parent_struct(t_parent *parent, char **argv);
+void			close_parent(t_parent *parent);
 void			provide_forks(unsigned int forks_to_provide, sem_t *forks);
+int				init_parent_struct(t_parent *parent, char **argv);
 
 // checkers.c
 void			thread_checker(t_bag *bag);
@@ -104,8 +107,8 @@ void			*simulation(void *arg);
 
 // time.c
 void			set_timers(t_times *timers, char **argv);
-char			is_time_to_die(t_times *time, sem_t *sem_time);
-char			is_time_to_stop(t_bag *bag, sem_t *sem_bag);
+int				is_time_to_die(t_times *time, sem_t *sem_time);
+int				is_time_to_stop(t_bag *bag, sem_t *sem_bag);
 unsigned int	get_usleep_time(t_times *time, unsigned int action, sem_t *sem);
 
 // utils.c
