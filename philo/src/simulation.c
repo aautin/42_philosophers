@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 16:56:13 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 14:52:43 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 15:02:23 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	*simulation(void *adress)
 
 	bag = (t_bag *) adress;
 	if ((*bag->i % 2) == 1)
-			usleep((bag->time->to_eat * 1000) - 50);
+		usleep((bag->time->to_eat * 1000) - 50);
 	bag->time->lastmeal.tv_sec = bag->time->start.tv_sec;
 	bag->time->lastmeal.tv_usec = bag->time->start.tv_usec;
 	while (is_time_to_die(bag) == 0)
