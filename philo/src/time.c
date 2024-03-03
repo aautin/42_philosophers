@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 19:12:20 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 13:53:02 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 14:44:06 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,9 @@ void	kill_philo_during_action(t_bag *bag, int timeleft, char action)
 	printlog(&bag->table->mutexs[*bag->philos_nb],
 		bag->time->start, *bag->i, action);
 	check_stop(bag);
-	change_finished_status(bag, -1);
 	usleep(timeleft * 1000);
+	check_stop(bag);
+	change_finished_status(bag, -1);
 	printlog(&bag->table->mutexs[*bag->philos_nb],
 		bag->time->start, *bag->i, DIED);
 }

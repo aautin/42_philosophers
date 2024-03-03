@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/15 16:56:13 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 13:49:12 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 14:52:43 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,10 @@ static void	nap(t_bag *bag)
 		usleep(bag->time->to_sleep * 1000);
 	}
 	check_stop(bag);
-	if (are_forks_free(bag) == 0)
-	{
-		printlog(&bag->table->mutexs[*bag->philos_nb],
-			bag->time->start, *bag->i, THINKING);
-		
-	}
-	else
-	{
-		eat(bag);
-		nap(bag);
-	}
+	printlog(&bag->table->mutexs[*bag->philos_nb],
+		bag->time->start, *bag->i, THINKING);
+	if (bag->time->to_sleep < bag->time->to_eat && *bag->philos_nb % 2 == 1)
+		usleep(((bag->time->to_eat - bag->time->to_sleep) * 1000) + 1);
 }
 
 void	*simulation(void *adress)

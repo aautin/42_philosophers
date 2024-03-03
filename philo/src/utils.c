@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/02 23:36:14 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/03 14:06:14 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,43 +40,22 @@ void	printlog(t_mutex *printmutex, t_time start, unsigned int i, char action)
 	unsigned int	timestamp;
 
 	pthread_mutex_lock(printmutex);
-	// check_stop(bag);
+	gettimeofday(&current, NULL);
+	timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
+	timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 	if (action == FORK)
 	{
-		gettimeofday(&current, NULL);
-		timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
-		timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 		printf("%u %d %s", timestamp, i, "has taken a fork\n");
 		printf("%u %d %s", timestamp, i, "has taken a fork\n");
 	}
 	else if (action == EATING)
-	{
-		gettimeofday(&current, NULL);
-		timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
-		timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 		printf("%u %d %s", timestamp, i, "is eating\n");
-	}
 	else if (action == SLEEPING)
-	{
-		gettimeofday(&current, NULL);
-		timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
-		timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 		printf("%u %d %s", timestamp, i, "is sleeping\n");
-	}
 	else if (action == THINKING)
-	{
-		gettimeofday(&current, NULL);
-		timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
-		timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 		printf("%u %d %s", timestamp, i, "is thinking\n");
-	}
 	else if (action == DIED)
-	{
-		gettimeofday(&current, NULL);
-		timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
-		timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 		printf("%u %d %s", timestamp, i, "died\n");
-	}
 	pthread_mutex_unlock(printmutex);
 }
 
