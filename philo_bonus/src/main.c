@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:12:02 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/04 13:01:56 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 17:31:51 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	fork_philos(t_parent *parent, char *argv[])
 	}
 	provide_forks(parent->forks, parent->philos_nb);
 	wait_signal(parent->signal, parent->philos_nb);
-	sem_post(parent->kill);
+	send_signal(parent->kill, parent->philos_nb);
 	return (EXIT_SUCCESS);
 }
 

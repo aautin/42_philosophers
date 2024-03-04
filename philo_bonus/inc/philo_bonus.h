@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/04 13:03:12 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 17:22:11 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,9 @@ typedef struct s_sems
 	// mallocated part
 	sem_t			*forks;
 	sem_t			*signal;
+	sem_t			*kill;
 	sem_t			*child;
+
 }	t_sems;
 
 typedef struct s_times
@@ -77,7 +79,7 @@ typedef struct s_number
 	char			stop;
 }	t_number;
 
-typedef struct s_bag
+typedef struct s_child
 {
 	// mallocated part
 	t_sems			sem;
@@ -86,39 +88,41 @@ typedef struct s_bag
 	// stacked part
 	t_number		nb;
 	t_times			time;
-}	t_bag;
+}	t_child;
+
+// activities.c
+void			eating(t_child *child);	
+void			sleeping(t_child *child);	
+void			thinking(t_child *child);	
 
 // child.c
-void			close_child(t_bag *bag);
+void			close_child(t_child *child);
 int				child_process(t_parent *parent, char **argv, unsigned int i);
 
 // parent.c
 void			close_parent(t_parent *parent);
 int				init_parent_struct(t_parent *parent, char **argv);
 
-// checker.c
-void			thread_checker(t_bag *bag);
-void			parent_checker(unsigned int philos_nb, sem_t *stop);
+// parsing.c
+int				are_argvs_correct(int argc, char *argv[]);
 
-// simulater.c
-void			*simulation(void *arg);
+// routines.c
+void			extern_checking(t_child *child);
+void			*intern_checking(void *arg);
+void			*simulating(void *arg);
+
+// signal.c
+void			send_signal(sem_t *signal, unsigned int signals_nb);
+void			wait_signal(sem_t *signal, unsigned int signals_nb);
 
 // time.c
 void			set_timers(t_times *timers, char **argv);
-// int				is_time_to_die(t_times *time, sem_t *sem_time);
-// int				is_time_to_stop(t_bag *bag, sem_t *sem_bag);
-// unsigned int	get_usleep_time(t_times *time, unsigned int action, sem_t *sem);
+int				is_time_to_stop(t_child *child);
+int				is_time_to_die(t_child *child);
 
 // utils.c
 unsigned int	ft_atou(char *str_number);
 char			*ft_utoa(unsigned int number);
 void			printlog(sem_t *child, t_time start, unsigned int i, char act);
-
-// parsing.c
-int				are_argvs_correct(int argc, char *argv[]);
-
-// signal.c
-void			send_signal(sem_t *signal, unsigned int signals_nb);
-void			wait_signal(sem_t *signal, unsigned int signals_nb);
 
 #endif
