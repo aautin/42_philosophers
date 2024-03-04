@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/04 12:32:45 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 13:03:12 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ typedef pthread_t		t_thread;
 typedef struct s_parent
 {
 	// mallocated part
-	pid_t	*pid;
-	sem_t	*forks;
-	sem_t	*signal;
-	sem_t	*kill;
+	pid_t			*pid;
+	sem_t			*forks;
+	sem_t			*signal;
+	sem_t			*kill;
 
 	// stacked part
 	unsigned int	philos_nb;
@@ -54,9 +54,9 @@ typedef struct s_parent
 typedef struct s_sems
 {
 	// mallocated part
-	sem_t	*forks;
-	sem_t	*signal;
-	sem_t	*child;
+	sem_t			*forks;
+	sem_t			*signal;
+	sem_t			*child;
 }	t_sems;
 
 typedef struct s_times
@@ -80,12 +80,12 @@ typedef struct s_number
 typedef struct s_bag
 {
 	// mallocated part
-	t_sems		sem;
-	char 		*name;
+	t_sems			sem;
+	char			*name;
 
 	// stacked part
-	t_number	nb;
-	t_times		time;
+	t_number		nb;
+	t_times			time;
 }	t_bag;
 
 // child.c

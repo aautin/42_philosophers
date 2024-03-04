@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:12:02 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/04 12:26:29 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 13:01:56 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	main(int argc, char *argv[])
 			return (1);
 		forks_returnval = fork_philos(&parent, argv);
 		while (waitpid(-1, NULL, 0) > 0)
-			;	
+			;
 		return (close_parent(&parent), forks_returnval);
 	}
 	else
