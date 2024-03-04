@@ -6,19 +6,24 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:55:02 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/04 17:31:10 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 18:08:11 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	extern_checking(t_child *child)
+void	extern_checking(t_child *child, pthread_t *th)
 {
 	sem_wait(child->sem.kill);
 	sem_wait(child->sem.child);
 	child->nb.stop = 1;
 	sem_post(child->sem.child);
 	printf("extern[%s] finished\n", child->name);
+	if (pthread_join(th[0], NULL) == -1)
+		printf("pthread_create() issue\n");
+	if (pthread_join(th[1], NULL) == -1)
+		printf("pthread_create() issue\n");
+	printf("[%s] finished\n", child->name);
 }
 
 void	*intern_checking(void *arg)

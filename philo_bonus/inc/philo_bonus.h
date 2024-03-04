@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/04 17:22:11 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 18:07:54 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int				init_parent_struct(t_parent *parent, char **argv);
 int				are_argvs_correct(int argc, char *argv[]);
 
 // routines.c
-void			extern_checking(t_child *child);
+void			extern_checking(t_child *child, pthread_t *th);
 void			*intern_checking(void *arg);
 void			*simulating(void *arg);
 

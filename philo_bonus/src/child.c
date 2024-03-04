@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:51:19 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/04 17:47:02 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 18:07:19 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,8 @@ int	child_process(t_parent *parent, char **argv, unsigned int i)
 	pthread_t	th[2];
 
 	if (init_child_struct(&child, parent, argv, i) == 1)
-	{
-		send_signal(child.sem.child, child.nb.philos);
-		return (close_parent(parent), EXIT_FAILURE);
-	}
+		return (send_signal(child.sem.child, child.nb.philos),
+			close_parent(parent), EXIT_FAILURE);
 	if (pthread_create(&th[0], NULL, &intern_checking, &child) == -1)
 	{
 		printf("pthread_create() issue\n");
@@ -70,9 +68,6 @@ int	child_process(t_parent *parent, char **argv, unsigned int i)
 			printf("pthread_join() issue\n");
 		return (close_child(&child), close_parent(parent), EXIT_FAILURE);
 	}
-	extern_checking(&child);
-	if (pthread_join(th[0], NULL) == -1 || pthread_join(th[1], NULL) == -1)
-		printf("pthread_create() issue\n");
-	printf("[%s] finished\n", child.name);
+	extern_checking(&child, th);
 	return (close_child(&child), close_parent(parent), EXIT_SUCCESS);
 }
