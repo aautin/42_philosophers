@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 16:28:42 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 12:51:42 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,6 @@ void	close_parent(t_parent *parent)
 	sem_close(parent->forks);
 	sem_unlink(SEM_FORKS);
 	free(parent->pid);
-}
-
-void	provide_forks(unsigned int forks_to_provide, sem_t *forks)
-{
-	while (forks_to_provide--)
-	{
-		if ((forks_to_provide % 2) == 1)
-			sem_post(forks);
-	}
 }
 
 int	init_parent_struct(t_parent *parent, char **argv)

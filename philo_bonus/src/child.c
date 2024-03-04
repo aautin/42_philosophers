@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/24 16:51:19 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 17:22:24 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 12:49:09 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,9 @@
 
 void	close_child(t_bag *bag)
 {
-	// somethings has to be sem_close, sem_unlink and free
-}
-
-void	send_signal(sem_t *signal, unsigned int signals_nb)
-{
-	unsigned int	i;
-
-	i = 0;
-	while (i < signals_nb)
-	{
-		sem_post(signal);
-		i++
-	}
+	sem_unlink(bag->name);
+	sem_close(bag->sem.child);
+	free(bag->name);
 }
 
 static int	init_child_struct(t_bag *bag, t_parent *parent, char **argv,
@@ -61,6 +51,6 @@ int	child_process(t_parent *parent, char **argv, unsigned int i)
 		send_signal(bag.sem.child, bag.nb.philos);
 		return (close_parent(parent), EXIT_FAILURE);
 	}
-	send_signal(bag.sem.child, bag.nb.philos);
-	return (close_child(bag), close_parent(parent), EXIT_SUCCESS);
+	send_signal(bag.sem.signal, bag.nb.philos);
+	return (close_child(&bag), close_parent(parent), EXIT_SUCCESS);
 }

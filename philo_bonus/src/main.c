@@ -6,11 +6,20 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:12:02 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 17:16:20 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 12:26:29 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+static void	provide_forks(sem_t *forks, unsigned int forks_to_provide)
+{
+	while (forks_to_provide--)
+	{
+		if ((forks_to_provide % 2) == 1)
+			sem_post(forks);
+	}
+}
 
 static int	fork_philos(t_parent *parent, char *argv[])
 {
@@ -28,16 +37,9 @@ static int	fork_philos(t_parent *parent, char *argv[])
 				EXIT_FAILURE);
 		i++;
 	}
-	provide_forks(parent->philos_nb, parent->forks);
-	i = 0;
-	while (i < parent->philos_nb)
-	{
-		sem_wait(parent->signal);
-		i++;
-	}
+	provide_forks(parent->forks, parent->philos_nb);
+	wait_signal(parent->signal, parent->philos_nb);
 	sem_post(parent->kill);
-	while (waitpid(-1, NULL, 0) > 0)
-		;
 	return (EXIT_SUCCESS);
 }
 
@@ -48,11 +50,11 @@ int	main(int argc, char *argv[])
 
 	if (argc == 6 || argc == 5)
 	{
-		if (are_argvs_correct(argc, argv) == 0)
+		if (!are_argvs_correct(argc, argv) || init_parent_struct(&parent, argv))
 			return (1);
-		if (init_parent_struct(argv, &parent) == 1)
-			return (1);
-		forks_returnval = fork_philos(argv, &parent);
+		forks_returnval = fork_philos(&parent, argv);
+		while (waitpid(-1, NULL, 0) > 0)
+			;	
 		return (close_parent(&parent), forks_returnval);
 	}
 	else

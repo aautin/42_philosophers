@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:38:30 by aautin            #+#    #+#             */
-/*   Updated: 2024/02/28 18:54:05 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 12:28:53 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,13 @@ char	*ft_utoa(unsigned int number)
 	return (str_number);
 }
 
-void	printlog(sem_t *time, t_time start, unsigned int i, char action)
+void	printlog(sem_t *child, t_time start, unsigned int i, char action)
 {
 	t_time			current;
 	unsigned int	timestamp;
 
 	gettimeofday(&current, NULL);
-	sem_wait(time);
+	sem_wait(child);
 	timestamp = (current.tv_sec * 1000) - (start.tv_sec * 1000);
 	timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 	if (action == FORK)
@@ -78,25 +78,5 @@ void	printlog(sem_t *time, t_time start, unsigned int i, char action)
 		printf("%u %d %s", timestamp, i, "is thinking\n");
 	else if (action == DIED)
 		printf("%u %d %s", timestamp, i, "died\n");
-	sem_post(time);
-}
-
-void	unlink_sems(char *sem1, char *sem2, char *sem3)
-{
-	if (sem1)
-		sem_unlink(sem1);
-	if (sem2)
-		sem_unlink(sem2);
-	if (sem3)
-		sem_unlink(sem3);
-}
-
-void	close_sems(sem_t *sem1, sem_t *sem2, sem_t *sem3)
-{
-	if (sem1)
-		sem_close(sem1);
-	if (sem2)
-		sem_close(sem2);
-	if (sem3)
-		sem_close(sem3);
+	sem_post(child);
 }

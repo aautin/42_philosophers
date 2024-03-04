@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 19:47:27 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 17:22:17 by aautin           ###   ########.fr       */
+/*   Updated: 2024/03/04 12:32:45 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,15 +90,13 @@ typedef struct s_bag
 
 // child.c
 void			close_child(t_bag *bag);
-void			send_signal(sem_t *signal, unsigned int signals_nb);
 int				child_process(t_parent *parent, char **argv, unsigned int i);
 
 // parent.c
 void			close_parent(t_parent *parent);
-void			provide_forks(unsigned int forks_to_provide, sem_t *forks);
 int				init_parent_struct(t_parent *parent, char **argv);
 
-// checkers.c
+// checker.c
 void			thread_checker(t_bag *bag);
 void			parent_checker(unsigned int philos_nb, sem_t *stop);
 
@@ -107,18 +105,20 @@ void			*simulation(void *arg);
 
 // time.c
 void			set_timers(t_times *timers, char **argv);
-int				is_time_to_die(t_times *time, sem_t *sem_time);
-int				is_time_to_stop(t_bag *bag, sem_t *sem_bag);
-unsigned int	get_usleep_time(t_times *time, unsigned int action, sem_t *sem);
+// int				is_time_to_die(t_times *time, sem_t *sem_time);
+// int				is_time_to_stop(t_bag *bag, sem_t *sem_bag);
+// unsigned int	get_usleep_time(t_times *time, unsigned int action, sem_t *sem);
 
 // utils.c
 unsigned int	ft_atou(char *str_number);
 char			*ft_utoa(unsigned int number);
-void			printlog(sem_t *time, t_time start, unsigned int i, char act);
-void			close_sems(sem_t *sem1, sem_t *sem2, sem_t *sem3);
-void			unlink_sems(char *sem1, char *sem2, char *sem3);
+void			printlog(sem_t *child, t_time start, unsigned int i, char act);
 
 // parsing.c
 int				are_argvs_correct(int argc, char *argv[]);
+
+// signal.c
+void			send_signal(sem_t *signal, unsigned int signals_nb);
+void			wait_signal(sem_t *signal, unsigned int signals_nb);
 
 #endif

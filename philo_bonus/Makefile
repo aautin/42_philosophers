@@ -2,13 +2,13 @@ NAME			:=	philo_bonus
 
 INCPATH			:=	-I inc
 
-FILES			:=	parent.c 	\
-					main.c		\
-					parsing.c	\
-					# child.c		\
-					# simulater.c	\
-					# time.c		\
-					# utils.c
+FILES			:=	parent.c 		\
+					main.c			\
+					parsing.c		\
+					child.c			\
+					signal.c		\
+					utils.c			\
+					time.c
 SRCPATH			:=	src
 SRC				:=	$(addprefix $(SRCPATH)/,$(FILES))
 
