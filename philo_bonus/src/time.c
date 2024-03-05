@@ -39,12 +39,38 @@ int	is_time_to_die(t_child *child)
 
 	gettimeofday(&current, NULL);
 	sem_wait(child->sem.child);
-	time_spent = current.tv_sec * 1000 - child->time.start.tv_sec * 1000;
-	time_spent += current.tv_usec / 1000 - child->time.start.tv_usec / 1000;
+	time_spent = current.tv_sec * 1000 - child->time.lastmeal.tv_sec * 1000;
+	time_spent += current.tv_usec / 1000 - child->time.lastmeal.tv_usec / 1000;
 	if (time_spent < child->time.to_die)
 		die = 0;
 	else
 		die = 1;
 	sem_post(child->sem.child);
 	return (die);
+}
+
+unsigned int	get_usleep_time(t_times time, sem_t *sem, char action)
+{
+	t_time			current;
+	unsigned int	time_spent;
+
+	gettimeofday(&current, NULL);
+	sem_wait(sem);
+	time_spent = current.tv_sec * 1000 - time.lastmeal.tv_sec * 1000;
+	time_spent += current.tv_usec / 1000 - time.lastmeal.tv_usec / 1000;
+	if (action == EATING)
+	{
+		if (time.to_die - time_spent < time.to_eat)
+			return (sem_post(sem), (time.to_die - time_spent) * 1000);
+		else
+			return (sem_post(sem), time.to_eat * 1000);
+	}
+	if (action == SLEEPING)
+	{
+		if (time.to_die - time_spent < time.to_sleep)
+			return (sem_post(sem), (time.to_die - time_spent) * 1000);
+		else
+			return (sem_post(sem), time.to_sleep * 1000);
+	}
+	return (sem_post(sem), time.to_die * 1000);
 }

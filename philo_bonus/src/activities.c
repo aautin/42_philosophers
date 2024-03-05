@@ -14,13 +14,39 @@
 
 void	eating(t_child *child)
 {
-	(void) child;
-	return ;
+	if (is_time_to_stop(child))
+		pthread_exit(NULL);
+	sem_wait(child->sem.forks);
+	if (is_time_to_stop(child))
+	{
+		sem_post(child->sem.forks);
+		pthread_exit(NULL);
+	}
+	printlog(child->sem.child, child->time.start, ft_atou(child->name), FORK);
+	if (is_time_to_stop(child))
+	{
+		sem_post(child->sem.forks);
+		pthread_exit(NULL);
+	}
+	sem_wait(child->sem.child);
+	gettimeofday(&child->time.lastmeal, NULL);
+	sem_post(child->sem.child);
+	printlog(child->sem.child, child->time.start, ft_atou(child->name), EATING);
+	usleep(get_usleep_time(child->time, child->sem.child, EATING));
+	if (is_time_to_stop(child))
+	{
+		sem_post(child->sem.forks);
+		pthread_exit(NULL);
+	}
+	sem_post(child->sem.forks);
 }
 
 void	sleeping(t_child *child)
-{
-	(void) child;
+{	
+	if (is_time_to_stop(child))
+		pthread_exit(NULL);
+	printlog(child->sem.child, child->time.start, ft_atou(child->name),
+		SLEEPING);
 	return ;
 }
 

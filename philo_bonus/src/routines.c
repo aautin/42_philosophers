@@ -41,7 +41,7 @@ void	*intern_checking(void *arg)
 	sem_wait(child->sem.child);
 	child->nb.stop = 1;
 	sem_post(child->sem.child);
-	printf("intern[%s] finished\n", child->name);
+	printlog(child->sem.child, child->time.start, ft_atou(child->name), DIED);
 	pthread_exit(NULL);
 }
 

@@ -29,8 +29,7 @@ int	init_parent_struct(t_parent *parent, char **argv)
 	parent->pid = (pid_t *)malloc(parent->philos_nb * sizeof(pid_t));
 	if (!parent->pid)
 		return (free(parent->pid), printf("malloc() issue\n"), 1);
-	parent->forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL, 777,
-			parent->philos_nb);
+	parent->forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL, 777, 0);
 	if (parent->forks == NULL)
 		return (free(parent->pid), printf("sem_open() issue\n"), 1);
 	parent->signal = sem_open(SEM_SIGNAL, O_CREAT | O_EXCL, 777, 0);

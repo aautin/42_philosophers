@@ -119,6 +119,7 @@ void			wait_signal(sem_t *signal, unsigned int signals_nb);
 void			set_timers(t_times *timers, char **argv);
 int				is_time_to_stop(t_child *child);
 int				is_time_to_die(t_child *child);
+unsigned int	get_usleep_time(t_times time, sem_t *sem, char action);
 
 // utils.c
 unsigned int	ft_atou(char *str_number);
