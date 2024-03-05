@@ -69,14 +69,14 @@ unsigned int	get_usleep_time(t_times time, sem_t *sem, char action)
 		else
 			return (sem_post(sem), time.to_sleep * 1000);
 	}
-	return (sem_post(sem), time.to_die * 1000);
+	return (0);
 }
 
 unsigned int	get_thinking_sleep(t_times time)
 {
-	if (time.to_eat > time.to_sleep)
+	if (time.to_eat >= time.to_sleep)
 	{
-		return ((time.to_eat - time.to_sleep + 1) * 1000);
+		return (((time.to_eat - time.to_sleep) * 1000) + 1);
 	}
 	else
 		return (0);

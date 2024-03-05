@@ -29,11 +29,9 @@ void	wait_signal(sem_t *signal, unsigned int signals_nb)
 	unsigned int	i;
 
 	i = 0;
-	printf("parent waits signal %d time...\n", signals_nb);
 	while (i < signals_nb)
 	{
 		sem_wait(signal);
 		i++;
 	}
-	printf("parent finished to wait.\n");
 }
