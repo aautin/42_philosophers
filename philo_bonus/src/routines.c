@@ -23,7 +23,6 @@ void	extern_checking(t_child *child, pthread_t *th)
 		printf("pthread_create() issue\n");
 	if (pthread_join(th[1], NULL) == -1)
 		printf("pthread_create() issue\n");
-	printf("[%s] finished\n", child->name);
 }
 
 void	*intern_checking(void *arg)
@@ -35,7 +34,7 @@ void	*intern_checking(void *arg)
 	{
 		if (is_time_to_stop(child) == 1)
 			pthread_exit(NULL);
-		usleep(10);
+		usleep(5);
 	}
 	send_signal(child->sem.signal, child->nb.philos);
 	sem_wait(child->sem.child);
@@ -50,6 +49,12 @@ void	*simulating(void *arg)
 	t_child	*child;
 
 	child = (t_child *) arg;
+	sem_wait(child->sem.child);
+	if (ft_atou(child->name) % 2 == 1)
+		usleep((child->time.to_eat * 1000) - 1);
+	sem_post(child->sem.child);
+	if (is_time_to_stop(child))
+		pthread_exit(NULL);
 	while (is_time_to_stop(child) == 0)
 	{
 		eating(child);

@@ -41,10 +41,7 @@ int	is_time_to_die(t_child *child)
 	sem_wait(child->sem.child);
 	time_spent = current.tv_sec * 1000 - child->time.lastmeal.tv_sec * 1000;
 	time_spent += current.tv_usec / 1000 - child->time.lastmeal.tv_usec / 1000;
-	if (time_spent < child->time.to_die)
-		die = 0;
-	else
-		die = 1;
+	die = time_spent > child->time.to_die;
 	sem_post(child->sem.child);
 	return (die);
 }
@@ -73,4 +70,14 @@ unsigned int	get_usleep_time(t_times time, sem_t *sem, char action)
 			return (sem_post(sem), time.to_sleep * 1000);
 	}
 	return (sem_post(sem), time.to_die * 1000);
+}
+
+unsigned int	get_thinking_sleep(t_times time)
+{
+	if (time.to_eat > time.to_sleep)
+	{
+		return ((time.to_eat - time.to_sleep + 1) * 1000);
+	}
+	else
+		return (0);
 }

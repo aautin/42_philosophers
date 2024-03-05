@@ -47,11 +47,21 @@ void	sleeping(t_child *child)
 		pthread_exit(NULL);
 	printlog(child->sem.child, child->time.start, ft_atou(child->name),
 		SLEEPING);
-	return ;
+	if (is_time_to_stop(child))
+		pthread_exit(NULL);
+	usleep(get_usleep_time(child->time, child->sem.child, SLEEPING));
+	if (is_time_to_stop(child))
+		pthread_exit(NULL);
 }
 
 void	thinking(t_child *child)
 {
-	(void) child;
-	return ;
+	if (is_time_to_stop(child))
+		pthread_exit(NULL);
+	printlog(child->sem.child, child->time.start, ft_atou(child->name),
+		THINKING);
+	if (is_time_to_stop(child))
+		pthread_exit(NULL);
+	if ((child->nb.philos % 2) == 1)
+		usleep(get_thinking_sleep(child->time));
 }
