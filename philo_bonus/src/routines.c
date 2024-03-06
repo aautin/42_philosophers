@@ -18,7 +18,6 @@ void	extern_checking(t_child *child, pthread_t *th)
 	sem_wait(child->sem.child);
 	child->nb.stop = 1;
 	sem_post(child->sem.child);
-	// printf("extern[%s] finished\n", child->name);
 	if (pthread_join(th[0], NULL) == -1)
 		printf("pthread_create() issue\n");
 	if (pthread_join(th[1], NULL) == -1)
@@ -61,6 +60,5 @@ void	*simulating(void *arg)
 		sleeping(child);
 		thinking(child);
 	}
-	// printf("simul[%s] finished\n", child->name);
 	pthread_exit(NULL);
 }

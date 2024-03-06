@@ -26,7 +26,8 @@ static int	fork_philos(t_parent *parent, char *argv[])
 	unsigned int	i;
 
 	i = 0;
-	gettimeofday(&parent->start, NULL);
+	while (gettimeofday(&parent->start, NULL) == -1)
+		;
 	while (i < parent->philos_nb)
 	{
 		parent->pid[i] = fork();

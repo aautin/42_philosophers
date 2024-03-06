@@ -31,8 +31,7 @@ static int	init_child_struct(t_child *child, t_parent *parent, char **argv,
 	child->sem.forks = parent->forks;
 	child->sem.signal = parent->signal;
 	child->sem.kill = parent->kill;
-	child->time.start.tv_sec = parent->start.tv_sec;
-	child->time.start.tv_usec = parent->start.tv_usec;
+	child->time.start = parent->start;
 	set_timers(&child->time, argv);
 	child->nb.stop = 0;
 	child->nb.philos = parent->philos_nb;
