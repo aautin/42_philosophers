@@ -71,10 +71,3 @@ long long int	get_usleep_time(t_times time, sem_t *sem, char action)
 	}
 	return (0);
 }
-
-long long int	get_thinking_sleep(t_times time)
-{
-	if (time.to_eat >= time.to_sleep)
-		return (((time.to_eat - time.to_sleep) * 1000) + 500);
-	return (0);
-}

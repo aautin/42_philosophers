@@ -71,5 +71,5 @@ void	thinking(t_child *child)
 	if (is_time_to_stop(child))
 		pthread_exit(NULL);
 	if ((child->nb.philos % 2) == 1)
-		usleep(get_thinking_sleep(child->time));
+		usleep((child->time.to_eat * 2 - child->time.to_sleep) * 1000);
 }

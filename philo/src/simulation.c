@@ -55,8 +55,8 @@ static void	nap(t_bag *bag)
 	check_stop(bag);
 	printlog(&bag->table->mutexs[*bag->philos_nb],
 		bag->time->start, *bag->i, THINKING);
-	if (bag->time->to_sleep < bag->time->to_eat && *bag->philos_nb % 2 == 1)
-		usleep(((bag->time->to_eat - bag->time->to_sleep) * 1000) + 1);
+	if (*bag->philos_nb % 2 == 1)
+		usleep((bag->time->to_eat * 2 - bag->time->to_sleep) * 1000);
 }
 
 void	*simulation(void *adress)
@@ -64,6 +64,10 @@ void	*simulation(void *adress)
 	t_bag	*bag;
 
 	bag = (t_bag *) adress;
+	if (*bag->philos_nb == 1)
+		return (usleep(bag->time->to_die * 1000),
+			printlog(&bag->table->mutexs[*bag->philos_nb],
+				bag->time->start, *bag->i, DIED), adress);
 	if ((*bag->i % 2) == 1)
 		usleep((bag->time->to_eat * 1000) - 50);
 	bag->time->lastmeal.tv_sec = bag->time->start.tv_sec;

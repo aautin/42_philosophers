@@ -48,6 +48,9 @@ void	*simulating(void *arg)
 	t_child	*child;
 
 	child = (t_child *) arg;
+
+	if (child->nb.philos == 1)
+		pthread_exit(NULL);
 	sem_wait(child->sem.child);
 	if (ft_atou(child->name) % 2 == 1)
 		usleep((child->time.to_eat * 1000) - 1);
