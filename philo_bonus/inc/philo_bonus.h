@@ -40,20 +40,17 @@ typedef pthread_t		t_thread;
 
 typedef struct s_parent
 {
-	// mallocated part
 	pid_t			*pid;
 	sem_t			*forks;
 	sem_t			*signal;
 	sem_t			*kill;
 
-	// stacked part
 	unsigned int	philos_nb;
 	t_time			start;
 }	t_parent;
 
 typedef struct s_sems
 {
-	// mallocated part
 	sem_t			*forks;
 	sem_t			*signal;
 	sem_t			*kill;
@@ -63,7 +60,6 @@ typedef struct s_sems
 
 typedef struct s_times
 {
-	// stacked part
 	unsigned int	to_die;
 	unsigned int	to_eat;
 	unsigned int	to_sleep;
@@ -73,7 +69,6 @@ typedef struct s_times
 
 typedef struct s_number
 {
-	// stacked part
 	unsigned int	philos;
 	int				meals;
 	char			stop;
@@ -81,11 +76,9 @@ typedef struct s_number
 
 typedef struct s_child
 {
-	// mallocated part
 	t_sems			sem;
 	char			*name;
 
-	// stacked part
 	t_number		nb;
 	t_times			time;
 }	t_child;

@@ -24,7 +24,7 @@ GREEN			:=	"\033[0;32m"
 
 CC				:=	cc
 RM				:=	rm -f
-CFLG			:=	-g3 -Wall -Werror -Wextra 
+CFLG			:=	-Wall -Werror -Wextra
 
 all				:	$(NAME)
 

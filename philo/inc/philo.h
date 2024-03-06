@@ -82,7 +82,7 @@ void			*simulation(void *adress);
 // time.c
 void			set_timers(t_table *table, t_timers *timers, char **argv);
 int				is_time_to_die(t_bag *bag);
-unsigned int	get_time_left(t_bag *bag);
+long long int	get_time_left(t_bag *bag);
 void			kill_philo_during_action(t_bag *bag, int time, char act);		
 
 // fork.c

@@ -24,7 +24,7 @@ void	set_timers(t_table *table, t_timers *timers, char **argv)
 int	is_time_to_die(t_bag *bag)
 {
 	t_time			current;
-	unsigned int	milliseconds;
+	long long int	milliseconds;
 
 	gettimeofday(&current, NULL);
 	milliseconds = 0;
@@ -37,10 +37,10 @@ int	is_time_to_die(t_bag *bag)
 	return (0);
 }
 
-unsigned int	get_time_left(t_bag *bag)
+long long int	get_time_left(t_bag *bag)
 {
 	t_time			current;
-	unsigned int	milliseconds;
+	long long int	milliseconds;
 
 	gettimeofday(&current, NULL);
 	milliseconds = 0;

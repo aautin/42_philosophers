@@ -59,7 +59,7 @@ char	*ft_utoa(unsigned int number)
 void	printlog(sem_t *child, t_time start, unsigned int i, char action)
 {
 	t_time			current;
-	unsigned int	timestamp;
+	long long int	timestamp;
 
 	gettimeofday(&current, NULL);
 	sem_wait(child);
@@ -67,16 +67,16 @@ void	printlog(sem_t *child, t_time start, unsigned int i, char action)
 	timestamp += (current.tv_usec / 1000) - (start.tv_usec / 1000);
 	if (action == FORK)
 	{
-		printf("%u %d %s", timestamp, i, "has taken a fork\n");
-		printf("%u %d %s", timestamp, i, "has taken a fork\n");
+		printf("%lld %d %s", timestamp, i, "has taken a fork\n");
+		printf("%lld %d %s", timestamp, i, "has taken a fork\n");
 	}
 	else if (action == EATING)
-		printf("%u %d %s", timestamp, i, "is eating\n");
+		printf("%lld %d %s", timestamp, i, "is eating\n");
 	else if (action == SLEEPING)
-		printf("%u %d %s", timestamp, i, "is sleeping\n");
+		printf("%lld %d %s", timestamp, i, "is sleeping\n");
 	else if (action == THINKING)
-		printf("%u %d %s", timestamp, i, "is thinking\n");
+		printf("%lld %d %s", timestamp, i, "is thinking\n");
 	else if (action == DIED)
-		printf("%u %d %s", timestamp, i, "died\n");
+		printf("%lld %d %s", timestamp, i, "died\n");
 	sem_post(child);
 }
