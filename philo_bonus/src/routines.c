@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:55:02 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/04 18:08:11 by aautin           ###   ########.fr       */
+/*   Updated: 2024/06/14 17:46:11 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	*simulating(void *arg)
 	t_child	*child;
 
 	child = (t_child *) arg;
-
 	if (child->nb.philos == 1)
 		pthread_exit(NULL);
 	sem_wait(child->sem.child);
