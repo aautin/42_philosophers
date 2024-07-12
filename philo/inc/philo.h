@@ -3,18 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 15:02:35 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/12 14:28:07 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef philo_H
-# define philo_H
+#ifndef PHILO_H
+# define PHILO_H
 
-#define NO_MEALS_LIMIT	-1
-#define DEAD			-2
-#define EXIT			-3
+# include "thread.h"
+# include "time.h"
+
+# define NO_MEALS_LIMIT	-1
+# define DEAD			-2
+# define EXIT			-3
+
+typedef struct s_philosopher {
+	t_time	time;
+	int		philos_nb;
+	int		index;
+
+	t_mutex		*printf;
+	t_sync_var	*left_fork;
+	t_sync_var	*right_fork;
+	t_sync_var	*status;
+}	t_philo;
 
 #endif
