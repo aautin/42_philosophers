@@ -4,6 +4,7 @@ INCPATH			:=	-I inc
 
 FILES			:=	\
 					parsing.c	\
+					monitor.c	\
 					main.c		\
 
 SRCPATH			:=	src

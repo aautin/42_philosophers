@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/12 14:28:07 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/13 00:45:43 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ typedef struct s_philosopher {
 	int		index;
 
 	t_mutex		*printf;
+	t_sync_var	*status;
 	t_sync_var	*left_fork;
 	t_sync_var	*right_fork;
-	t_sync_var	*status;
 }	t_philo;
 
 #endif

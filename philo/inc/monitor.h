@@ -1,26 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.h                                    :+:      :+:    :+:   */
+/*   monitor.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 15:02:35 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/13 00:50:21 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_H
-# define CONFIG_H
+#ifndef MONITOR_H
+# define MONITOR_H
 
-typedef struct s_config {
-	int	philos_nb;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	meals_to_eat;
-}	t_config;
+# include "philo.h"
+# include "thread.h"
 
-t_config	*get_config(int argc, char *argv[]);
+typedef struct s_monitoring_pthread {
+	pthread_t	*threads;
+
+	t_philo		**philos;
+
+	t_sync_var	**forks;
+	t_sync_var	**philos_status;
+
+	t_mutex		*printf;
+}	t_monitor;
+
+t_monitor	*get_monitor(t_config *config);
 
 #endif

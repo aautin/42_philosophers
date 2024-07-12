@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/03/03 13:52:18 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/12 17:23:31 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static int	is_argc_correct(int argc)
 	return (FALSE);
 }
 
-static int	are_argv_correct(t_preconfig *config)
+static int	are_argv_correct(t_config *config)
 {
 	if (config->philos_nb > 0 && config->time_to_die > 0
 		&& config->time_to_eat > 0 && config->time_to_sleep > 0
@@ -64,7 +64,7 @@ static int	are_argv_correct(t_preconfig *config)
 	return (FALSE);
 }
 
-static void	init_preconfig(t_preconfig *config, int argc, char *argv[])
+static void	init_config(t_config *config, int argc, char *argv[])
 {
 	config->philos_nb = ft_atoi(argv[0]);
 	config->time_to_die = ft_atoi(argv[1]);
@@ -81,9 +81,9 @@ static void	init_preconfig(t_preconfig *config, int argc, char *argv[])
 		config->meals_to_eat = NO_MEALS_LIMIT;	
 }
 
-t_preconfig	*get_preconfig(int argc, char *argv[])
+t_config	*get_config(int argc, char *argv[])
 {
-	t_preconfig	*config;
+	t_config	*config;
 
 	if (!is_argc_correct(argc))
 		return (NULL);
@@ -91,10 +91,10 @@ t_preconfig	*get_preconfig(int argc, char *argv[])
 	config = malloc(sizeof(*config));
 	if (config == NULL)
 	{
-		perror("get_preconfig():malloc()");
+		perror("get_config():malloc()");
 		return (NULL);
 	}
-	init_preconfig(config, argc, argv);
+	init_config(config, argc, argv);
 
 	if (are_argv_correct(config))
 		return (config);
