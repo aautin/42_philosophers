@@ -5,6 +5,8 @@ INCPATH			:=	-I inc
 FILES			:=	\
 					utils.c			\
 					parsing.c		\
+					philo.c			\
+					thread.c		\
 					monitor_init.c	\
 					monitor.c		\
 					simulation.c	\
