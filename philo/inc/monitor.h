@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 14:42:47 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/13 17:26:54 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "philo.h"
 # include "thread.h"
+# include "config.h"
 
 typedef struct s_monitoring_pthread {
 	int			philos_nb;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor_init.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 14:25:34 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/13 18:30:07 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,18 +87,17 @@ void	init_monitor(t_monitor *monitor, t_config *config)
 	}
 
 	monitor->printf = malloc(sizeof(*monitor->printf));
-	pthread_mutex_init(monitor->printf, NULL);
 
 	monitor->philos = NULL;
 	if (are_sync_vars_mallocated(monitor->philos_status, monitor->forks, config->philos_nb)
 		&& monitor->printf != NULL)
 	{
 		monitor->philos = malloc(config->philos_nb * sizeof(*monitor->philos));	
+		pthread_mutex_init(monitor->printf, NULL);
 		init_monitor_philos(monitor, config);
 	}
 
 	monitor->threads = NULL;
 	if (are_philos_mallocated(monitor->philos, config->philos_nb))
-		monitor->threads = malloc(sizeof(*monitor->threads));
+		monitor->threads = malloc(config->philos_nb * sizeof(*monitor->threads));
 }
-
