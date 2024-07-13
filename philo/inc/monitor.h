@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 14:39:27 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/13 14:42:47 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include "thread.h"
 
 typedef struct s_monitoring_pthread {
+	int			philos_nb;
+
 	pthread_t	*threads;
 
 	t_philo		**philos;

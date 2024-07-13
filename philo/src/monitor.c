@@ -6,10 +6,11 @@
 /*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 14:38:58 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/13 14:49:04 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "common.h"
@@ -71,7 +72,14 @@ t_monitor	*get_monitor(t_config *config)
 	if (monitor == NULL)
 		return (NULL);
 
+	monitor->philos_nb = config->philos_nb;
+
 	init_monitor(monitor, config);
-	
+	if (monitor->threads == NULL)
+	{
+		perror("init_monitor():malloc()");
+		free_monitor(monitor, monitor->philos_nb);
+		return (NULL);
+	}
 	return (monitor);
 }

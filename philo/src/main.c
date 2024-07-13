@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 01:18:09 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/13 14:49:18 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,7 @@ int	main(int argc, char *argv[])
 	if (monitor == NULL)
 		return (EXIT_FAILURE);
 
-	free(monitor->forks[0]);
-	free(monitor->forks[1]);
-	free(monitor->forks);
-	free(monitor->philos[0]);
-	free(monitor->philos[1]);
-	free(monitor->philos);
-	free(monitor->philos_status[0]);
-	free(monitor->philos_status[1]);
-	free(monitor->philos_status);
-	free(monitor->printf);
-	free(monitor->threads);
-	free(monitor);
+	free_monitor(monitor, monitor->philos_nb);
 
 	return (EXIT_SUCCESS);
 }
