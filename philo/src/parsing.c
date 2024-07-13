@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/12 17:23:31 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/13 14:38:49 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,34 +16,7 @@
 #include "common.h"
 #include "config.h"
 #include "philo.h"
-
-#define PLUS	1
-#define MINUS	-1
-
-static int	ft_atoi(const char *nptr)
-{
-	int		i;
-	int		nb;
-	int		sign;
-
-	sign = PLUS;
-	nb = 0;
-	i = 0;
-	while (nptr[i] == ' ' || (9 <= nptr[i] && nptr[i] <= 13))
-		i++;
-	if (nptr[i] == '-' || nptr[i] == '+')
-	{
-		if (nptr[i] == '-')
-			sign = MINUS;
-		i++;
-	}
-	while ('0' <= nptr[i] && nptr[i] <= '9')
-	{
-		nb = (nb * 10) + nptr[i] - 48;
-		i++;
-	}
-	return (nb * sign);
-}
+#include "utils.h"
 
 static int	is_argc_correct(int argc)
 {

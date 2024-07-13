@@ -3,9 +3,11 @@ NAME			:=	philo
 INCPATH			:=	-I inc
 
 FILES			:=	\
-					parsing.c	\
-					monitor.c	\
-					main.c		\
+					utils.c			\
+					parsing.c		\
+					monitor_init.c	\
+					monitor.c		\
+					main.c			\
 
 SRCPATH			:=	src
 SRC				:=	$(addprefix $(SRCPATH)/,$(FILES))
