@@ -4,6 +4,7 @@ INCPATH			:=	-I inc
 
 FILES			:=	\
 					utils.c			\
+					fork.c			\
 					parsing.c		\
 					thread.c		\
 					monitor_init.c	\

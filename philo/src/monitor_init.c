@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor_init.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 18:30:07 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/14 03:39:41 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 #include "config.h"
 #include "monitor.h"
-
-#define	FREE	0
-#define	TAKEN	1
 
 static void	init_sync_vars(t_sync_var **philos_status, t_sync_var **forks, t_config *config)
 {
@@ -43,13 +40,13 @@ static void	init_sync_vars(t_sync_var **philos_status, t_sync_var **forks, t_con
 
 static void	init_philo(t_monitor *monitor, t_config *config, int i)
 {
-	monitor->philos[i]->time.die = config->time_to_die;
-	monitor->philos[i]->time.eat = config->time_to_eat;
-	monitor->philos[i]->time.sleep = config->time_to_sleep;
+	monitor->philos[i]->times.die = config->time_to_die;
+	monitor->philos[i]->times.eat = config->time_to_eat;
+	monitor->philos[i]->times.sleep = config->time_to_sleep;
 	monitor->philos[i]->philos_nb = config->philos_nb;
 	monitor->philos[i]->index = i;
 
-	monitor->philos[i]->printf = monitor->printf;
+	monitor->philos[i]->print = monitor->print;
 	monitor->philos[i]->status = monitor->philos_status[i];
 	monitor->philos[i]->left_fork = monitor->forks[i];
 	monitor->philos[i]->right_fork = monitor->forks[(i + config->philos_nb + 1) % config->philos_nb];
@@ -86,14 +83,14 @@ void	init_monitor(t_monitor *monitor, t_config *config)
 		monitor->philos_status = NULL;
 	}
 
-	monitor->printf = malloc(sizeof(*monitor->printf));
+	monitor->print = malloc(sizeof(*monitor->print));
 
 	monitor->philos = NULL;
 	if (are_sync_vars_mallocated(monitor->philos_status, monitor->forks, config->philos_nb)
-		&& monitor->printf != NULL)
+		&& monitor->print != NULL)
 	{
 		monitor->philos = malloc(config->philos_nb * sizeof(*monitor->philos));	
-		pthread_mutex_init(monitor->printf, NULL);
+		pthread_mutex_init(monitor->print, NULL);
 		init_monitor_philos(monitor, config);
 	}
 

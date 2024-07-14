@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 17:26:54 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/14 03:39:22 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_monitoring_pthread {
 	t_sync_var	**forks;
 	t_sync_var	**philos_status;
 
-	t_mutex		*printf;
+	t_mutex		*print;
 }	t_monitor;
 
 int			are_sync_vars_mallocated(t_sync_var **philos_status, t_sync_var **forks, int philos_nb);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 21:25:20 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/14 03:38:40 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,26 @@
 # define DEAD			-2
 # define EXIT			-3
 
-typedef struct s_philosopher {
-	t_time	time;
-	int		philos_nb;
-	int		index;
+# define FREE			0
+# define TAKEN			1
 
-	t_mutex		*printf;
+typedef enum e_state
+{
+	FORK,
+	EAT,
+	SLEEP,
+	THINK,
+	DIE
+}	t_state;
+
+typedef struct s_philosopher {
+	t_times		times;
+	t_time		timestamp;
+	t_time		lastmeal;
+	int			philos_nb;
+	int			index;
+
+	t_mutex		*print;
 	t_sync_var	*status;
 	t_sync_var	*left_fork;
 	t_sync_var	*right_fork;

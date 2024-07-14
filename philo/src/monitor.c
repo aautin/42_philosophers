@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 14:49:04 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/14 03:40:09 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	free_monitor(t_monitor *monitor, int philos_nb)
 		free_double_tab((void **) monitor->forks, philos_nb);
 	if (monitor->philos_status != NULL)
 		free_double_tab((void **) monitor->philos_status, philos_nb);
-	free(monitor->printf);
+	free(monitor->print);
 	free(monitor);
 }
 
