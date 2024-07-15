@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 14:36:38 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 03:23:05 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/15 21:06:03 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,10 @@ int	fragmented_usleep(int time, t_philo *philo)
 {
 	while (time > 0)
 	{
-		usleep((time % 200) * 1000);
-		time -= (time % 200);
 		if (should_philo_stop(philo))
 			return (FAILURE);
+		usleep((time % 200) * 1000);
+		time -= (time % 200);
 	}
 	return (SUCCESS);
 }

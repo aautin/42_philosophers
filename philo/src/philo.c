@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 03:27:15 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/15 21:08:59 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,20 +42,20 @@ int	should_philo_stop(t_philo *philo)
 
 static int	simulate_activity(t_philo *philo, int action)
 {
-	int const	lastmeal = get_time_spend(philo->lastmeal);
+	int const	time_spent = get_time_spend(philo->lastmeal);
 	int			activity_time;
-	int			eat_time;
+	int			sleep_time;
 
 	if (action == EAT)
 		activity_time = philo->times.eat;
 	else
 		activity_time = philo->times.sleep;
-	if (lastmeal + activity_time < philo->times.die)
-		eat_time = activity_time;
+	if (time_spent + activity_time < philo->times.die)
+		sleep_time = activity_time;
 	else
-		eat_time = activity_time - ((lastmeal + activity_time) - philo->times.die);
+		sleep_time = philo->times.die - time_spent;
 	print_state(philo->print, philo->timestamp, philo->index, action);
-	if (fragmented_usleep(eat_time, philo) == FAILURE)
+	if (fragmented_usleep(sleep_time, philo) == FAILURE)
 	{
 		free_forks(philo->left_fork, philo->right_fork, philo->index);
 		return (FAILURE);
