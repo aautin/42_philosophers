@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   thread.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 21:10:42 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/13 21:16:05 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/15 03:19:40 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 
 #include "common.h"
-#include "simulation.h"
+#include "fork.h"
 #include "philo.h"
 #include "thread.h"
 
 /** * @retval the number of pthreads created by the monitoring pthread */
-int	create_philos(pthread_t *threads, t_philo **philos, int philos_nb)
+int	create_threads(pthread_t *threads, t_philo **philos, int philos_nb)
 {
 	int	i;
 
@@ -27,7 +27,7 @@ int	create_philos(pthread_t *threads, t_philo **philos, int philos_nb)
 	{
 		if (pthread_create(&threads[i], NULL, &philosopher, philos[i]) != 0)
 		{
-			perror("create_philos():pthread_create()");
+			perror("create_threads():pthread_create()");
 			return (i);
 		}
 		i++;
@@ -35,7 +35,7 @@ int	create_philos(pthread_t *threads, t_philo **philos, int philos_nb)
 	return (i);
 }
 
-void	stop_philos(t_sync_var **philos_status, int philos_to_join_nb)
+void	stop_threads(t_sync_var **philos_status, int philos_to_join_nb)
 {
 	int		i;
 
@@ -49,7 +49,7 @@ void	stop_philos(t_sync_var **philos_status, int philos_to_join_nb)
 	}
 }
 
-void	join_philos(pthread_t *threads, int philos_to_join_nb)
+void	join_threads(pthread_t *threads, int philos_to_join_nb)
 {
 	void	*buffer;
 	int		i;
@@ -58,7 +58,7 @@ void	join_philos(pthread_t *threads, int philos_to_join_nb)
 	while (i < philos_to_join_nb)
 	{
 		if (pthread_join(threads[i], &buffer) != 0)
-			perror("join_philos():pthread_join()");
+			perror("join_threads():pthread_join()");
 		i++;
 	}
 }

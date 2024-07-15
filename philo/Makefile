@@ -5,11 +5,11 @@ INCPATH			:=	-I inc
 FILES			:=	\
 					utils.c			\
 					fork.c			\
+					philo.c			\
 					parsing.c		\
 					thread.c		\
 					monitor_init.c	\
 					monitor.c		\
-					simulation.c	\
 					main.c			\
 
 SRCPATH			:=	src

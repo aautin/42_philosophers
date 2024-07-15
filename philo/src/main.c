@@ -6,16 +6,33 @@
 /*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/14 02:33:20 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/15 03:19:40 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
-#include "simulation.h"
+#include "fork.h"
 #include "common.h"
 #include "config.h"
 #include "monitor.h"
+
+static int	start_simulation(t_monitor *monitor)
+{
+	int const	created_philos_nb = create_threads(monitor->threads, monitor->philos, monitor->philos_nb);
+
+	if (created_philos_nb != monitor->philos_nb)
+	{
+		stop_threads(monitor->philos_status, created_philos_nb);
+		join_threads(monitor->threads, created_philos_nb);
+		return (FAILURE);
+	}
+
+	monitoring(monitor);
+	stop_threads(monitor->philos_status, monitor->philos_nb);
+	join_threads(monitor->threads, monitor->philos_nb);
+	return (SUCCESS);
+}
 
 int	main(int argc, char *argv[])
 {

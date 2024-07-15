@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 04:01:58 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/14 04:04:02 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/15 02:18:40 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,14 @@ void	unlock_forks(t_sync_var *left, t_sync_var *right, int philo_index)
 		pthread_mutex_unlock(&right->mutex);
 }
 
+void	free_forks(t_sync_var *left, t_sync_var *right, int philo_index)
+{
+	lock_forks(left, right, philo_index);
+	left->var = FREE;
+	right->var = FREE;
+	unlock_forks(left, right, philo_index);	
+}
+
 int	take_forks(t_philo *philo)
 {
 	int	status;
@@ -43,7 +51,7 @@ int	take_forks(t_philo *philo)
 		status = SUCCESS;
 		philo->left_fork->var = TAKEN;
 		philo->right_fork->var = TAKEN;
-		print_state(philo->print, get_time_spend(philo->timestamp), philo->index, FORK);
+		print_state(philo->print, philo->timestamp, philo->index, FORK);
 	}
 	else
 		status = FAILURE;

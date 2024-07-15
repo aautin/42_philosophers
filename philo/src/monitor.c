@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/14 03:40:09 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/15 01:59:36 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,26 @@ t_monitor	*get_monitor(t_config *config)
 		return (NULL);
 	}
 	return (monitor);
+}
+
+void	monitoring(t_monitor *monitor)
+{
+	int	i;
+
+	i = monitor->philos_nb;
+	while (i == monitor->philos_nb)
+	{
+		i = 0;
+		while (i < monitor->philos_nb)
+		{
+			pthread_mutex_lock(&monitor->philos_status[i]->mutex);
+			if (monitor->philos_status[i]->var == DEAD)
+			{
+				pthread_mutex_unlock(&monitor->philos_status[i]->mutex);
+				break ;
+			}
+			pthread_mutex_unlock(&monitor->philos_status[i]->mutex);
+			i++;
+		}
+	}
 }
