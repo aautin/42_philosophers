@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/16 17:50:21 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/16 23:53:13 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,19 @@ int	should_philo_stop(t_philo *philo)
 
 static int	simulate_activity(t_philo *philo, int action)
 {
-	int const	time_spent = get_time_spend(philo->lastmeal);
+	int			time_spent;
 	int			activity_time;
 	int			sleep_time;
 	int			usleep_status;
 
 	if (action == EAT)
+	{
 		activity_time = philo->times.eat;
+		gettimeofday(&philo->lastmeal, NULL);
+	}
 	else
 		activity_time = philo->times.sleep;
+	time_spent = get_time_spend(philo->lastmeal);
 	if (time_spent + activity_time < philo->times.die)
 		sleep_time = activity_time;
 	else
@@ -58,10 +62,7 @@ static int	simulate_activity(t_philo *philo, int action)
 	print_state(philo->print, philo->timestamp, philo->index, action);
 	usleep_status = fragmented_usleep(sleep_time, philo);
 	if (action == EAT && usleep_status == SUCCESS)
-	{
 		free_forks(philo->left_fork, philo->right_fork, philo->index);
-		gettimeofday(&philo->lastmeal, NULL);
-	}
 	return (usleep_status);
 }
 
@@ -72,6 +73,8 @@ void	*philosopher(void *param)
 
 	gettimeofday(&philo->timestamp, NULL);
 	philo->lastmeal = philo->timestamp;
+	if (philo->index % 2 == 1)
+		usleep((philo->times.eat * 1000) / 2);
 	while (should_philo_stop(philo) == FALSE)
 	{
 		if (take_forks(philo) == SUCCESS)
@@ -79,6 +82,8 @@ void	*philosopher(void *param)
 			if (simulate_activity(philo, EAT) == FAILURE || simulate_activity(philo, SLEEP) == FAILURE)
 				return (NULL);
 			print_state(philo->print, philo->timestamp, philo->index, THINK);
+			if (philo->philos_nb % 2 == 1)
+				usleep((philo->times.eat * 2 - philo->times.sleep) * 1000);
 		}
 	}
 	return (NULL);
