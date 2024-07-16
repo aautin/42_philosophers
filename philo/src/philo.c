@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 21:08:59 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/16 17:50:21 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ static int	simulate_activity(t_philo *philo, int action)
 	int const	time_spent = get_time_spend(philo->lastmeal);
 	int			activity_time;
 	int			sleep_time;
+	int			usleep_status;
 
 	if (action == EAT)
 		activity_time = philo->times.eat;
@@ -55,15 +56,13 @@ static int	simulate_activity(t_philo *philo, int action)
 	else
 		sleep_time = philo->times.die - time_spent;
 	print_state(philo->print, philo->timestamp, philo->index, action);
-	if (fragmented_usleep(sleep_time, philo) == FAILURE)
+	usleep_status = fragmented_usleep(sleep_time, philo);
+	if (action == EAT && usleep_status == SUCCESS)
 	{
 		free_forks(philo->left_fork, philo->right_fork, philo->index);
-		return (FAILURE);
-	}
-	if (action == EAT)
 		gettimeofday(&philo->lastmeal, NULL);
-	free_forks(philo->left_fork, philo->right_fork, philo->index);
-	return (SUCCESS);
+	}
+	return (usleep_status);
 }
 
 void	*philosopher(void *param)

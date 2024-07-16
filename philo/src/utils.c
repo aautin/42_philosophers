@@ -6,12 +6,13 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 14:36:38 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 21:06:03 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/16 17:42:08 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "common.h"
 #include "philo.h"
@@ -73,8 +74,16 @@ int	fragmented_usleep(int time, t_philo *philo)
 	{
 		if (should_philo_stop(philo))
 			return (FAILURE);
-		usleep((time % 200) * 1000);
-		time -= (time % 200);
+		if (time > 50)
+		{
+			usleep(50 * 1000);
+			time -= 50;
+		}
+		else 
+		{
+			usleep(time * 1000);
+			time = 0;
+		}
 	}
 	return (SUCCESS);
 }
