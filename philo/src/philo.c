@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 17:55:05 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 17:56:28 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	*philosopher(void *param)
 			if (simulate_activity(philo, EAT) == FAILURE || simulate_activity(philo, SLEEP) == FAILURE)
 				return (NULL);
 			print_state(philo->print, philo->timestamp, philo->index, THINK);
-			if (philo->philos_nb % 2 == 1)
+			if (philo->philos_nb % 2 == 1 && (philo->times.eat * 2 - philo->times.sleep) > 0)
 				usleep((philo->times.eat * 2 - philo->times.sleep) * 1000);
 		}
 	}
