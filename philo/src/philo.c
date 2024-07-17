@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 17:56:28 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 18:21:33 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "common.h"
 
 void	kill_philo(t_sync_var *status, t_mutex *print, t_time timestamp,
-        int philo_index)
+			int philo_index)
 {
 	pthread_mutex_lock(&status->mutex);
 	status->var = DEAD;
@@ -28,9 +28,10 @@ void	kill_philo(t_sync_var *status, t_mutex *print, t_time timestamp,
 int	should_philo_stop(t_philo *philo)
 {
 	int	returnval;
+
 	pthread_mutex_lock(&philo->status->mutex);
-	returnval = philo->status->var == DEAD || philo->status->var == EXIT
-		|| philo->status->var == 0;
+	returnval = (philo->status->var == DEAD || philo->status->var == EXIT
+			|| philo->status->var == 0);
 	pthread_mutex_unlock(&philo->status->mutex);
 	if (returnval == FALSE
 		&& time_left_until_die(philo->times.die, philo->lastmeal) <= 0)
@@ -81,18 +82,20 @@ static int	simulate_activity(t_philo *philo, int action)
 void	*philosopher(void *param)
 {
 	t_philo	*philo;
-	philo = param;
 
+	philo = param;
 	gettimeofday(&philo->timestamp, NULL);
 	philo->lastmeal = philo->timestamp;
 	while (should_philo_stop(philo) == FALSE)
 	{
 		if (take_forks(philo) == SUCCESS)
 		{
-			if (simulate_activity(philo, EAT) == FAILURE || simulate_activity(philo, SLEEP) == FAILURE)
+			if (simulate_activity(philo, EAT) == FAILURE
+				|| simulate_activity(philo, SLEEP) == FAILURE)
 				return (NULL);
 			print_state(philo->print, philo->timestamp, philo->index, THINK);
-			if (philo->philos_nb % 2 == 1 && (philo->times.eat * 2 - philo->times.sleep) > 0)
+			if (philo->philos_nb % 2 == 1
+				&& (philo->times.eat * 2 - philo->times.sleep) > 0)
 				usleep((philo->times.eat * 2 - philo->times.sleep) * 1000);
 		}
 	}

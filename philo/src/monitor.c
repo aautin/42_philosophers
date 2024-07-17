@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 16:55:14 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 18:19:28 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
 #include "monitor.h"
 #include "utils.h"
 
-int	are_sync_vars_mallocated(t_sync_var **philos_status, t_sync_var **forks, int philos_nb)
+int	are_sync_vars_mallocated(t_sync_var **philos_status, t_sync_var **forks,
+		int philos_nb)
 {
 	int	i;
 
 	if (philos_status == NULL || forks == NULL)
 		return (FALSE);
-
 	i = 0;
 	while (i < philos_nb)
 	{
@@ -41,7 +41,6 @@ int	are_philos_mallocated(t_philo **philos, int philos_nb)
 
 	if (philos == NULL)
 		return (FALSE);
-
 	i = 0;
 	while (i < philos_nb)
 	{
@@ -68,13 +67,12 @@ void	free_monitor(t_monitor *monitor, int philos_nb)
 t_monitor	*get_monitor(t_config *config)
 {
 	t_monitor	*monitor;
+
 	monitor = malloc(sizeof(*monitor));
 	if (monitor == NULL)
 		return (NULL);
-
 	monitor->philos_nb = config->philos_nb;
 	monitor->meals_to_eat = config->meals_to_eat;
-
 	init_monitor(monitor, config);
 	if (monitor->threads == NULL)
 	{
@@ -109,7 +107,7 @@ void	monitoring(t_monitor *monitor)
 			i++;
 		}
 		if (monitor->meals_to_eat != NO_MEALS_LIMIT
-				&& still_meals_to_be_eaten == FALSE)
+			&& still_meals_to_be_eaten == FALSE)
 			break ;
 	}
 }

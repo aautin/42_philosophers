@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   time.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 00:23:34 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 18:12:55 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-typedef struct timeval t_time;
+typedef struct timeval	t_time;
 typedef struct s_times {
 	int	die;
 	int	eat;

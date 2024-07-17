@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 14:36:38 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 17:44:45 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 18:19:57 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ int	get_time_spend(t_time start_time)
 		+ (end_time.tv_usec - start_time.tv_usec) / 1000);
 }
 
-void	print_state(t_mutex *print, t_time timestamp, int philo_index, int action)
+void	print_state(t_mutex *print, t_time timestamp, int philo_index,
+			int action)
 {
 	int const	timevalue = get_time_spend(timestamp);
 
@@ -62,7 +63,7 @@ void	print_state(t_mutex *print, t_time timestamp, int philo_index, int action)
 		printf("%d %d is thinking\n", timevalue, philo_index + 1);
 	else if (action == DIE)
 		printf("%d %d died\n", timevalue, philo_index + 1);
-	pthread_mutex_unlock(print);	
+	pthread_mutex_unlock(print);
 }
 
 int	time_left_until_die(int time_to_die, t_time lastmeal)
@@ -81,7 +82,7 @@ int	fragmented_usleep(int time, t_philo *philo)
 			usleep(FRAGMENT_SIZE * 1000);
 			time -= FRAGMENT_SIZE;
 		}
-		else 
+		else
 		{
 			usleep(time * 1000);
 			time = 0;

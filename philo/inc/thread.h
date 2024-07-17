@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   thread.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 02:02:18 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 18:12:33 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,15 @@
 
 # include <pthread.h>
 
-typedef pthread_mutex_t t_mutex;
+struct					s_philosopher;
+typedef pthread_mutex_t	t_mutex;
 typedef struct s_synchronized_variable {
 	t_mutex	mutex;
-	int 	var;
+	int		var;
 }	t_sync_var;
 
-struct s_philosopher;
-
-int		create_threads(pthread_t *threads, struct s_philosopher **philos, int philos_nb);
+int		create_threads(pthread_t *threads, struct s_philosopher **philos,
+			int philos_nb);
 void	stop_threads(t_sync_var **philos_status, int philos_to_join_nb);
 void	join_threads(pthread_t *threads, int philos_to_join_nb);
 
