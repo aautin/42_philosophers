@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/16 23:53:13 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 17:55:05 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ int	should_philo_stop(t_philo *philo)
 {
 	int	returnval;
 	pthread_mutex_lock(&philo->status->mutex);
-	returnval = philo->status->var == DEAD || philo->status->var == EXIT;
+	returnval = philo->status->var == DEAD || philo->status->var == EXIT
+		|| philo->status->var == 0;
 	pthread_mutex_unlock(&philo->status->mutex);
 	if (returnval == FALSE
 		&& time_left_until_die(philo->times.die, philo->lastmeal) <= 0)
@@ -38,6 +39,14 @@ int	should_philo_stop(t_philo *philo)
 		returnval = TRUE;
 	}
 	return (returnval);
+}
+
+static void	count_meals(t_sync_var *philo_status)
+{
+	pthread_mutex_lock(&philo_status->mutex);
+	if (philo_status->var > 0)
+		philo_status->var--;
+	pthread_mutex_unlock(&philo_status->mutex);
 }
 
 static int	simulate_activity(t_philo *philo, int action)
@@ -62,7 +71,10 @@ static int	simulate_activity(t_philo *philo, int action)
 	print_state(philo->print, philo->timestamp, philo->index, action);
 	usleep_status = fragmented_usleep(sleep_time, philo);
 	if (action == EAT && usleep_status == SUCCESS)
+	{
+		count_meals(philo->status);
 		free_forks(philo->left_fork, philo->right_fork, philo->index);
+	}
 	return (usleep_status);
 }
 
@@ -73,8 +85,6 @@ void	*philosopher(void *param)
 
 	gettimeofday(&philo->timestamp, NULL);
 	philo->lastmeal = philo->timestamp;
-	if (philo->index % 2 == 1)
-		usleep((philo->times.eat * 1000) / 2);
 	while (should_philo_stop(philo) == FALSE)
 	{
 		if (take_forks(philo) == SUCCESS)

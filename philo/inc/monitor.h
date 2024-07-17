@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 02:00:03 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 16:52:43 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 typedef struct s_monitoring_pthread {
 	int			philos_nb;
+	int			meals_to_eat;
 
 	pthread_t	*threads;
 

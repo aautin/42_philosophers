@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 14:36:38 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/16 17:42:08 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 17:44:45 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include "philo.h"
 #include "time.h"
 #include "thread.h"
+
+#define FRAGMENT_SIZE	200
 
 /** * @param return_size put "-1" if must free until NULL ptr */
 void	free_double_tab(void **double_tab, int size)
@@ -74,10 +76,10 @@ int	fragmented_usleep(int time, t_philo *philo)
 	{
 		if (should_philo_stop(philo))
 			return (FAILURE);
-		if (time > 50)
+		if (time > FRAGMENT_SIZE)
 		{
-			usleep(50 * 1000);
-			time -= 50;
+			usleep(FRAGMENT_SIZE * 1000);
+			time -= FRAGMENT_SIZE;
 		}
 		else 
 		{

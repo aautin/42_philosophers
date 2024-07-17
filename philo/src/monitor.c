@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 01:59:36 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/17 16:55:14 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ t_monitor	*get_monitor(t_config *config)
 		return (NULL);
 
 	monitor->philos_nb = config->philos_nb;
+	monitor->meals_to_eat = config->meals_to_eat;
 
 	init_monitor(monitor, config);
 	if (monitor->threads == NULL)
@@ -87,10 +88,12 @@ t_monitor	*get_monitor(t_config *config)
 void	monitoring(t_monitor *monitor)
 {
 	int	i;
+	int	still_meals_to_be_eaten;
 
 	i = monitor->philos_nb;
 	while (i == monitor->philos_nb)
 	{
+		still_meals_to_be_eaten = FALSE;
 		i = 0;
 		while (i < monitor->philos_nb)
 		{
@@ -100,8 +103,13 @@ void	monitoring(t_monitor *monitor)
 				pthread_mutex_unlock(&monitor->philos_status[i]->mutex);
 				break ;
 			}
+			if (monitor->philos_status[i]->var > 0)
+				still_meals_to_be_eaten = TRUE;
 			pthread_mutex_unlock(&monitor->philos_status[i]->mutex);
 			i++;
 		}
+		if (monitor->meals_to_eat != NO_MEALS_LIMIT
+				&& still_meals_to_be_eaten == FALSE)
+			break ;
 	}
 }
