@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 18:21:33 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/18 14:35:43 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ void	*philosopher(void *param)
 	philo = param;
 	gettimeofday(&philo->timestamp, NULL);
 	philo->lastmeal = philo->timestamp;
+	if (philo->index % 2 == 1)
+		usleep(philo->philos_nb * 30);
 	while (should_philo_stop(philo) == FALSE)
 	{
 		if (take_forks(philo) == SUCCESS)

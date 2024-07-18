@@ -23,7 +23,7 @@ YELLOW			:=	"\033[0;33m"
 RED				:=	"\033[0;31m"
 GREEN			:=	"\033[0;32m"
 
-CC				:=	cc
+CC				:=	cc -fsanitize=thread
 RM				:=	rm -f
 CFLG			:=	-Wall -Werror -Wextra -g3
 
