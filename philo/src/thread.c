@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   thread.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aautin <aautin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 21:10:42 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/15 03:19:40 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/18 20:10:50 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,27 +35,20 @@ int	create_threads(pthread_t *threads, t_philo **philos, int philos_nb)
 	return (i);
 }
 
-void	stop_threads(t_sync_var **philos_status, int philos_to_join_nb)
+void	stop_threads(t_sync_var *sim_status)
 {
-	int		i;
-
-	i = 0;
-	while (i < philos_to_join_nb)
-	{
-		pthread_mutex_lock(&philos_status[i]->mutex);
-		philos_status[i]->var = EXIT;
-		pthread_mutex_unlock(&philos_status[i]->mutex);
-		i++;
-	}
+	pthread_mutex_lock(&sim_status->mutex);
+	sim_status->var = EXIT;
+	pthread_mutex_unlock(&sim_status->mutex);
 }
 
-void	join_threads(pthread_t *threads, int philos_to_join_nb)
+void	join_threads(pthread_t *threads, int philos_nb)
 {
 	void	*buffer;
 	int		i;
 
 	i = 0;
-	while (i < philos_to_join_nb)
+	while (i < philos_nb)
 	{
 		if (pthread_join(threads[i], &buffer) != 0)
 			perror("join_threads():pthread_join()");

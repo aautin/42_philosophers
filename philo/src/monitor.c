@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/18 14:09:28 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/18 20:25:14 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,16 @@
 #include "monitor.h"
 #include "utils.h"
 
-int	are_sync_vars_mallocated(t_sync_var **philos_status, t_sync_var **forks,
-		int philos_nb)
+int	are_forks_mallocated(t_sync_var **forks, int philos_nb)
 {
 	int	i;
 
-	if (philos_status == NULL || forks == NULL)
+	if (forks == NULL)
 		return (FALSE);
 	i = 0;
 	while (i < philos_nb)
 	{
-		if (philos_status[i] == NULL || forks[i] == NULL)
+		if (forks[i] == NULL)
 			return (FALSE);
 		i++;
 	}
@@ -58,8 +57,7 @@ void	free_monitor(t_monitor *monitor, int philos_nb)
 		free_double_tab((void **) monitor->philos, philos_nb);
 	if (monitor->forks != NULL)
 		free_double_tab((void **) monitor->forks, philos_nb);
-	if (monitor->philos_status != NULL)
-		free_double_tab((void **) monitor->philos_status, philos_nb);
+	free(monitor->sim_status);
 	free(monitor->print);
 	free(monitor);
 }
@@ -85,29 +83,14 @@ t_monitor	*get_monitor(t_config *config)
 
 void	monitoring(t_monitor *monitor)
 {
-	int	i;
-	int	still_meals_to_be_eaten;
-
-	i = monitor->philos_nb;
-	while (i == monitor->philos_nb)
+	while (42)
 	{
-		still_meals_to_be_eaten = FALSE;
-		i = 0;
-		while (i < monitor->philos_nb)
+		pthread_mutex_lock(&monitor->sim_status->mutex);
+		if (monitor->sim_status->var == EXIT)
 		{
-			pthread_mutex_lock(&monitor->philos_status[i]->mutex);
-			if (monitor->philos_status[i]->var == DEAD)
-			{
-				pthread_mutex_unlock(&monitor->philos_status[i]->mutex);
-				break ;
-			}
-			if (monitor->philos_status[i]->var > 0)
-				still_meals_to_be_eaten = TRUE;
-			pthread_mutex_unlock(&monitor->philos_status[i]->mutex);
-			i++;
-		}
-		if (monitor->meals_to_eat != NO_MEALS_LIMIT
-			&& still_meals_to_be_eaten == FALSE)
+			pthread_mutex_unlock(&monitor->sim_status->mutex);
 			break ;
+		}
+		pthread_mutex_unlock(&monitor->sim_status->mutex);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 18:12:33 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/18 20:11:01 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ typedef struct s_synchronized_variable {
 
 int		create_threads(pthread_t *threads, struct s_philosopher **philos,
 			int philos_nb);
-void	stop_threads(t_sync_var **philos_status, int philos_to_join_nb);
-void	join_threads(pthread_t *threads, int philos_to_join_nb);
+void	stop_threads(t_sync_var *sim_status);
+void	join_threads(pthread_t *threads, int philos_nb);
 
 #endif

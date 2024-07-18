@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 18:10:36 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/18 20:24:10 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,31 +16,34 @@
 # include "thread.h"
 # include "time.h"
 
-# define NO_MEALS_LIMIT	-1
-# define DEAD			-2
-# define EXIT			-3
+typedef enum e_sim_status {
+	WAIT = -2,
+	NO_MEALS_LIMIT = -1,
+	EXIT = 0
+}	t_sim_status;
 
 # define FREE			0
 # define TAKEN			1
 
-typedef enum e_state
+typedef enum e_activity
 {
 	FORK,
 	EAT,
 	SLEEP,
 	THINK,
 	DIE
-}	t_state;
+}	t_activity;
 
 typedef struct s_philosopher {
 	t_times		times;
 	t_time		timestamp;
 	t_time		lastmeal;
+	int			meals_to_eat;
 	int			philos_nb;
 	int			index;
 
 	t_mutex		*print;
-	t_sync_var	*status;
+	t_sync_var	*sim_status;
 	t_sync_var	*left_fork;
 	t_sync_var	*right_fork;
 }	t_philo;

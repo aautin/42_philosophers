@@ -6,17 +6,18 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 18:22:51 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/18 20:23:42 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
+#include "common.h"
 #include "config.h"
+#include "philo.h"
 #include "monitor.h"
 
-static void	init_sync_vars(t_sync_var **philos_status, t_sync_var **forks,
-				t_config *config)
+static void	init_forks(t_sync_var **forks, t_config *config)
 {
 	int	i;
 
@@ -29,12 +30,6 @@ static void	init_sync_vars(t_sync_var **philos_status, t_sync_var **forks,
 			forks[i]->var = FREE;
 			pthread_mutex_init(&forks[i]->mutex, NULL);
 		}
-		philos_status[i] = malloc(sizeof(*philos_status[i]));
-		if (philos_status[i] != NULL)
-		{
-			philos_status[i]->var = config->meals_to_eat;
-			pthread_mutex_init(&philos_status[i]->mutex, NULL);
-		}
 		i++;
 	}
 }
@@ -44,13 +39,14 @@ static void	init_philo(t_monitor *monitor, t_config *config, int i)
 	monitor->philos[i]->times.die = config->time_to_die;
 	monitor->philos[i]->times.eat = config->time_to_eat;
 	monitor->philos[i]->times.sleep = config->time_to_sleep;
+	monitor->philos[i]->meals_to_eat = config->meals_to_eat;
 	monitor->philos[i]->philos_nb = config->philos_nb;
 	monitor->philos[i]->index = i;
 	monitor->philos[i]->print = monitor->print;
-	monitor->philos[i]->status = monitor->philos_status[i];
+	monitor->philos[i]->sim_status = monitor->sim_status;
 	monitor->philos[i]->left_fork = monitor->forks[i];
-	monitor->philos[i]->right_fork = monitor->forks[(i
-			+ config->philos_nb + 1) % config->philos_nb];
+	monitor->philos[i]->right_fork = monitor->forks[(i + config->philos_nb + 1)
+		% config->philos_nb];
 }
 
 static void	init_monitor_philos(t_monitor *monitor, t_config *config)
@@ -72,25 +68,25 @@ static void	init_monitor_philos(t_monitor *monitor, t_config *config)
 void	init_monitor(t_monitor *monitor, t_config *config)
 {
 	monitor->forks = malloc(config->philos_nb * sizeof(*monitor->forks));
-	monitor->philos_status = malloc(config->philos_nb
-			* sizeof(*monitor->philos_status));
-	if (monitor->forks != NULL && monitor->philos_status != NULL)
-		init_sync_vars(monitor->philos_status, monitor->forks, config);
+	monitor->sim_status = malloc(sizeof(*monitor->sim_status));
+	if (monitor->forks != NULL && monitor->sim_status != NULL)
+		init_forks(monitor->forks, config);
 	else
 	{
 		free(monitor->forks);
-		free(monitor->philos_status);
+		free(monitor->sim_status);
 		monitor->forks = NULL;
-		monitor->philos_status = NULL;
+		monitor->sim_status = NULL;
 	}
 	monitor->print = malloc(sizeof(*monitor->print));
 	monitor->philos = NULL;
-	if (are_sync_vars_mallocated(monitor->philos_status, monitor->forks,
-			config->philos_nb) && monitor->print != NULL)
+	if (are_forks_mallocated(monitor->forks, config->philos_nb)
+			&& monitor->print != NULL)
 	{
-		monitor->philos = malloc(config->philos_nb
-				* sizeof(*monitor->philos));
+		monitor->philos = malloc(config->philos_nb * sizeof(*monitor->philos));
 		pthread_mutex_init(monitor->print, NULL);
+		pthread_mutex_init(&monitor->sim_status->mutex, NULL);
+		monitor->sim_status->var = WAIT;
 		init_monitor_philos(monitor, config);
 	}
 	monitor->threads = NULL;

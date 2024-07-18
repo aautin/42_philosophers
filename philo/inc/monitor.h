@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 18:13:41 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/18 19:25:27 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,13 @@ typedef struct s_monitoring_pthread {
 	t_philo		**philos;
 
 	t_sync_var	**forks;
-	t_sync_var	**philos_status;
+	t_sync_var	*sim_status;
 
 	t_mutex		*print;
 }	t_monitor;
 
 // monitor_init.c
-int			are_sync_vars_mallocated(t_sync_var **philos_status,
-				t_sync_var **forks, int philos_nb);
+int			are_forks_mallocated(t_sync_var **forks, int philos_nb);
 int			are_philos_mallocated(t_philo **philos, int philos_nb);
 
 // monitor.c

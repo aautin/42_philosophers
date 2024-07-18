@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 18:16:08 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/18 20:20:14 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,38 @@
 #include "config.h"
 #include "monitor.h"
 
-static int	start_simulation(t_monitor *monitor)
+int	get_simulation_status(t_sync_var *start)
 {
-	int const	created_philos_nb = create_threads(monitor->threads,
-			monitor->philos, monitor->philos_nb);
+	int	simulation_status;
 
+	pthread_mutex_lock(&start->mutex);
+	simulation_status = start->var;
+	pthread_mutex_unlock(&start->mutex);
+	return (simulation_status);
+}
+
+static void	start_simulation(t_sync_var *start, int meals_to_eat)
+{
+	pthread_mutex_lock(&start->mutex);
+	start->var = meals_to_eat;
+	pthread_mutex_unlock(&start->mutex);
+}
+
+static int	prepare_simulation(t_monitor *monitor)
+{
+	int	created_philos_nb;
+
+	created_philos_nb = create_threads(monitor->threads,
+		monitor->philos, monitor->philos_nb);
 	if (created_philos_nb != monitor->philos_nb)
 	{
-		stop_threads(monitor->philos_status, created_philos_nb);
+		stop_threads(monitor->sim_status);
 		join_threads(monitor->threads, created_philos_nb);
 		return (FAILURE);
 	}
+	start_simulation(monitor->sim_status, monitor->meals_to_eat);
 	monitoring(monitor);
-	stop_threads(monitor->philos_status, monitor->philos_nb);
+	stop_threads(monitor->sim_status);
 	join_threads(monitor->threads, monitor->philos_nb);
 	return (SUCCESS);
 }
@@ -47,7 +66,7 @@ int	main(int argc, char *argv[])
 	free(config);
 	if (monitor == NULL)
 		return (EXIT_FAILURE);
-	status = start_simulation(monitor);
+	status = prepare_simulation(monitor);
 	free_monitor(monitor, monitor->philos_nb);
 	if (status == FAILURE)
 		return (EXIT_FAILURE);
