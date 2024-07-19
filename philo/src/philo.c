@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/19 21:55:25 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/19 23:12:58 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int	should_philo_stop(t_philo *philo)
 	if (sim_status_val != EXIT && sim_status_val != 0
 		&& time_left_until_die(philo->times.die, philo->lastmeal) <= 0)
 	{
-		kill_philo(philo->sim_status, philo->print, philo->timestamp, philo->index);
+		kill_philo(philo->sim_status, philo->print, philo->timestamp,
+			philo->index);
 		sim_status_val = EXIT;
 	}
 	else
@@ -80,16 +81,19 @@ static int	simulate_activity(t_philo *philo, int action, int activity_time)
 		count_meals(philo->sim_status, &philo->meals_to_eat);
 		free_forks(philo->left_fork, philo->right_fork, philo->index);
 	}
+	if (should_philo_stop(philo) == TRUE)
+		return (FAILURE);
 	return (usleep_status);
 }
 
 int	get_simulation_status(t_sync_var *start);
+
 void	*philosopher(void *param)
 {
 	t_philo	*philo;
 
 	philo = param;
-	while(get_simulation_status(philo->sim_status) == WAIT)
+	while (get_simulation_status(philo->sim_status) == WAIT)
 		usleep(10);
 	gettimeofday(&philo->timestamp, NULL);
 	philo->lastmeal = philo->timestamp;
@@ -100,8 +104,7 @@ void	*philosopher(void *param)
 		if (take_forks(philo) == SUCCESS)
 		{
 			if (simulate_activity(philo, EAT, philo->times.eat) == FAILURE
-				|| simulate_activity(philo, SLEEP, philo->times.sleep) == FAILURE
-				|| should_philo_stop(philo))
+				|| simulate_activity(philo, SLEEP, philo->times.sleep))
 				return (NULL);
 			print_state(philo->print, philo->timestamp, philo->index, THINK);
 			if (philo->philos_nb % 2 == 1

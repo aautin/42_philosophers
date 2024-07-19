@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/18 20:23:42 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/19 23:04:02 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	init_monitor(t_monitor *monitor, t_config *config)
 	monitor->print = malloc(sizeof(*monitor->print));
 	monitor->philos = NULL;
 	if (are_forks_mallocated(monitor->forks, config->philos_nb)
-			&& monitor->print != NULL)
+		&& monitor->print != NULL)
 	{
 		monitor->philos = malloc(config->philos_nb * sizeof(*monitor->philos));
 		pthread_mutex_init(monitor->print, NULL);

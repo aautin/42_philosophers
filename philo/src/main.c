@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/18 20:20:14 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/19 23:04:29 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	prepare_simulation(t_monitor *monitor)
 	int	created_philos_nb;
 
 	created_philos_nb = create_threads(monitor->threads,
-		monitor->philos, monitor->philos_nb);
+			monitor->philos, monitor->philos_nb);
 	if (created_philos_nb != monitor->philos_nb)
 	{
 		stop_threads(monitor->sim_status);
