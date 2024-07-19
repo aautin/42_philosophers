@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/18 20:25:14 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/19 20:55:43 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,6 @@ void	monitoring(t_monitor *monitor)
 			break ;
 		}
 		pthread_mutex_unlock(&monitor->sim_status->mutex);
+		usleep(1000);
 	}
 }

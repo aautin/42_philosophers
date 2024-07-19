@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/18 20:33:52 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/19 21:55:25 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 void	kill_philo(t_sync_var *sim_status, t_mutex *print, t_time timestamp,
 			int philo_index)
 {
-	pthread_mutex_lock(&sim_status->mutex);
 	sim_status->var = EXIT;
 	pthread_mutex_unlock(&sim_status->mutex);
 	print_state(print, timestamp, philo_index, DIE);
@@ -27,18 +26,19 @@ void	kill_philo(t_sync_var *sim_status, t_mutex *print, t_time timestamp,
 
 int	should_philo_stop(t_philo *philo)
 {
-	int	returnval;
+	int	sim_status_val;
 
 	pthread_mutex_lock(&philo->sim_status->mutex);
-	returnval = (philo->sim_status->var == EXIT);
-	pthread_mutex_unlock(&philo->sim_status->mutex);
-	if (returnval == FALSE
+	sim_status_val = philo->sim_status->var;
+	if (sim_status_val != EXIT && sim_status_val != 0
 		&& time_left_until_die(philo->times.die, philo->lastmeal) <= 0)
 	{
 		kill_philo(philo->sim_status, philo->print, philo->timestamp, philo->index);
-		returnval = TRUE;
+		sim_status_val = EXIT;
 	}
-	return (returnval);
+	else
+		pthread_mutex_unlock(&philo->sim_status->mutex);
+	return ((sim_status_val == EXIT || sim_status_val == 0));
 }
 
 static void	count_meals(t_sync_var *sim_status, int *meals_to_eat)
@@ -56,29 +56,25 @@ static void	count_meals(t_sync_var *sim_status, int *meals_to_eat)
 	}
 }
 
-static int	simulate_activity(t_philo *philo, int action)
+static int	simulate_activity(t_philo *philo, int action, int activity_time)
 {
 	int			time_spent;
-	int			activity_time;
 	int			sleep_time;
 	int			usleep_status;
 
 	if (action == EAT)
-	{
-		activity_time = philo->times.eat;
 		gettimeofday(&philo->lastmeal, NULL);
-	}
-	else
-		activity_time = philo->times.sleep;
 	time_spent = get_time_spend(philo->lastmeal);
 	if (time_spent + activity_time < philo->times.die)
 		sleep_time = activity_time;
 	else
 		sleep_time = philo->times.die - time_spent;
+	if (sleep_time < 0)
+		sleep_time = 0;
 	if (should_philo_stop(philo) == TRUE)
 		return (FAILURE);
 	print_state(philo->print, philo->timestamp, philo->index, action);
-	usleep_status = fragmented_usleep(sleep_time, philo);
+	usleep_status = fragmented_usleep(sleep_time, activity_time, philo);
 	if (action == EAT && usleep_status == SUCCESS)
 	{
 		count_meals(philo->sim_status, &philo->meals_to_eat);
@@ -98,19 +94,21 @@ void	*philosopher(void *param)
 	gettimeofday(&philo->timestamp, NULL);
 	philo->lastmeal = philo->timestamp;
 	if (philo->index % 2 == 1)
-		usleep(2000);
+		usleep(10 * 1000);
 	while (should_philo_stop(philo) == FALSE)
 	{
 		if (take_forks(philo) == SUCCESS)
 		{
-			if (simulate_activity(philo, EAT) == FAILURE
-				|| simulate_activity(philo, SLEEP) == FAILURE
+			if (simulate_activity(philo, EAT, philo->times.eat) == FAILURE
+				|| simulate_activity(philo, SLEEP, philo->times.sleep) == FAILURE
 				|| should_philo_stop(philo))
 				return (NULL);
 			print_state(philo->print, philo->timestamp, philo->index, THINK);
 			if (philo->philos_nb % 2 == 1
 				&& (philo->times.eat * 2 - philo->times.sleep) > 0)
 				usleep((philo->times.eat * 2 - philo->times.sleep) * 1000);
+			else
+				usleep(1000);
 		}
 	}
 	return (NULL);

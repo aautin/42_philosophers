@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 14:36:38 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/18 20:41:07 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/19 21:17:23 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "time.h"
 #include "thread.h"
 
-#define FRAGMENT_SIZE	8
+#define FRAGMENT_SIZE	1000
 
 /** * @param return_size put "-1" if must free until NULL ptr */
 void	free_double_tab(void **double_tab, int size)
@@ -71,22 +71,27 @@ int	time_left_until_die(int time_to_die, t_time lastmeal)
 	return (time_to_die - get_time_spend(lastmeal));
 }
 
-int	fragmented_usleep(int time, t_philo *philo)
+int	fragmented_usleep(int time, int activity_time, t_philo *philo)
 {
-	while (time > 0)
+	int	fragmented_time;
+
+	fragmented_time = time;
+	while (fragmented_time > 0)
 	{
 		if (should_philo_stop(philo))
 			return (FAILURE);
-		if (time > FRAGMENT_SIZE)
+		if (fragmented_time > FRAGMENT_SIZE)
 		{
-			usleep(FRAGMENT_SIZE * 999);
-			time -= FRAGMENT_SIZE;
+			usleep(FRAGMENT_SIZE * 1000);
+			fragmented_time -= FRAGMENT_SIZE;
 		}
 		else
 		{
-			usleep(time * 1000);
-			time = 0;
+			usleep(fragmented_time * 1000);
+			fragmented_time = 0;
 		}
 	}
+	if (time != activity_time && should_philo_stop(philo) == TRUE)
+		return (FAILURE);
 	return (SUCCESS);
 }
