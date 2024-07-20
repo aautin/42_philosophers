@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/20 19:51:58 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/20 20:36:03 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,13 @@ void	*philosopher(void *param)
 	while (get_simulation_status(philo->sim_status) == WAIT)
 		usleep(10);
 	gettimeofday(&philo->timestamp, NULL);
+	if (philo->philos_nb == 1)
+	{
+		usleep(philo->times.die * 1000);
+		pthread_mutex_lock(&philo->sim_status->mutex);
+		kill_philo(philo->sim_status, philo->print, philo->timestamp, philo->index);
+		return (NULL);
+	}
 	philo->lastmeal = philo->timestamp;
 	if (philo->index % 2 == 1)
 		usleep(10 * 1000);
