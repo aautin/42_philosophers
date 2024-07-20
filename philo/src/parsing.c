@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/17 18:18:41 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/20 19:53:42 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ t_config	*get_config(int argc, char *argv[])
 		return (NULL);
 	}
 	init_config(config, argc, argv);
-	if (are_argv_correct(config))
+	if (are_argv_correct(config) == TRUE)
 		return (config);
 	free(config);
 	return (NULL);

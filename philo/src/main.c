@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:16:14 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/19 23:04:29 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/20 19:51:41 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ int	get_simulation_status(t_sync_var *start)
 	return (simulation_status);
 }
 
-static void	start_simulation(t_sync_var *start, int meals_to_eat)
+static void	start_simulation(t_sync_var *start, int philos_nb)
 {
 	pthread_mutex_lock(&start->mutex);
-	start->var = meals_to_eat;
+	start->var = philos_nb;
 	pthread_mutex_unlock(&start->mutex);
 }
 
@@ -46,7 +46,7 @@ static int	prepare_simulation(t_monitor *monitor)
 		join_threads(monitor->threads, created_philos_nb);
 		return (FAILURE);
 	}
-	start_simulation(monitor->sim_status, monitor->meals_to_eat);
+	start_simulation(monitor->sim_status, monitor->philos_nb);
 	monitoring(monitor);
 	stop_threads(monitor->sim_status);
 	join_threads(monitor->threads, monitor->philos_nb);

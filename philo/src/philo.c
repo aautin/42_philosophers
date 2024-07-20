@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 01:53:09 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/19 23:12:58 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/20 19:51:58 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	should_philo_stop(t_philo *philo)
 
 	pthread_mutex_lock(&philo->sim_status->mutex);
 	sim_status_val = philo->sim_status->var;
-	if (sim_status_val != EXIT && sim_status_val != 0
+	if (sim_status_val != EXIT
 		&& time_left_until_die(philo->times.die, philo->lastmeal) <= 0)
 	{
 		kill_philo(philo->sim_status, philo->print, philo->timestamp,
@@ -39,19 +39,18 @@ int	should_philo_stop(t_philo *philo)
 	}
 	else
 		pthread_mutex_unlock(&philo->sim_status->mutex);
-	return ((sim_status_val == EXIT || sim_status_val == 0));
+	return (sim_status_val == EXIT);
 }
 
 static void	count_meals(t_sync_var *sim_status, int *meals_to_eat)
 {
-	if (*meals_to_eat != NO_MEALS_LIMIT && meals_to_eat > 0)
+	if (*meals_to_eat != NO_MEALS_LIMIT && *meals_to_eat > 0)
 	{
 		(*meals_to_eat)--;
 		if (*meals_to_eat == 0)
 		{
 			pthread_mutex_lock(&sim_status->mutex);
-			if (sim_status->var > 0)
-				sim_status->var--;
+			sim_status->var--;
 			pthread_mutex_unlock(&sim_status->mutex);
 		}
 	}
@@ -104,7 +103,7 @@ void	*philosopher(void *param)
 		if (take_forks(philo) == SUCCESS)
 		{
 			if (simulate_activity(philo, EAT, philo->times.eat) == FAILURE
-				|| simulate_activity(philo, SLEEP, philo->times.sleep))
+				|| simulate_activity(philo, SLEEP, philo->times.sleep) == FAILURE)
 				return (NULL);
 			print_state(philo->print, philo->timestamp, philo->index, THINK);
 			if (philo->philos_nb % 2 == 1
