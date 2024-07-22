@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 04:01:58 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/18 16:56:59 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/22 17:14:30 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,16 @@ int	take_forks(t_philo *philo)
 {
 	int	status;
 
+	if (philo->left_fork == philo->right_fork)
+		return (FAILURE);
 	lock_forks(philo->left_fork, philo->right_fork, philo->index);
 	if (philo->left_fork->var == FREE && philo->right_fork->var == FREE)
 	{
 		status = SUCCESS;
 		philo->left_fork->var = TAKEN;
 		philo->right_fork->var = TAKEN;
-		print_state(philo->print, philo->timestamp, philo->index, FORK);
+		if (print_state(philo, FORK) == FAILURE)
+			status = FAILURE;
 	}
 	else
 		status = FAILURE;

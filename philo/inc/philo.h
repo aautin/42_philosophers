@@ -6,7 +6,7 @@
 /*   By: aautin <aautin@student.42.fr >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 03:52:45 by aautin            #+#    #+#             */
-/*   Updated: 2024/07/18 20:24:10 by aautin           ###   ########.fr       */
+/*   Updated: 2024/07/21 18:30:17 by aautin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ typedef struct s_philosopher {
 	t_sync_var	*right_fork;
 }	t_philo;
 
-void	kill_philo(t_sync_var *status, t_mutex *print, t_time timestamp,
-			int philo_index);
 int		should_philo_stop(t_philo *philo);
 void	*philosopher(void *param);
 
