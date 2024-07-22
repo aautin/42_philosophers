@@ -23,9 +23,9 @@ YELLOW			:=	"\033[0;33m"
 RED				:=	"\033[0;31m"
 GREEN			:=	"\033[0;32m"
 
-CC				:=	cc -fsanitize=thread
+CC				:=	cc
 RM				:=	rm -f
-CFLG			:=	-Wall -Werror -Wextra -g3
+CFLG			:=	-Wall -Werror -Wextra
 
 all				:	$(NAME)
 
